@@ -18,14 +18,7 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              50: '#f0f7ff',
-              100: '#e0f2fe',
-              500: '#0284c7',
-              600: '#0284c7',
-              700: '#0369a1',
-              800: '#075985',
-            }
+            brand: { 500: '#0284c7', 600: '#0284c7', 700: '#0369a1' }
           },
           fontFamily: {
             sans: ['Cairo', 'sans-serif'],
@@ -154,7 +147,7 @@
     <div id="admin-screen" class="space-y-5 hidden">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h2 class="text-base font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-sliders text-cyan-400"></i> لوحة الإدارة العامة
+          <i class="fa-solid fa-sliders text-cyan-400"></i> لوحة الإدارة العامة (متصل بالسيرفر)
         </h2>
         <span class="bg-cyan-500/10 text-cyan-400 text-xs font-bold px-3 py-1 rounded-full border border-cyan-500/20">System Master Admin</span>
       </div>
@@ -172,18 +165,17 @@
         <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 space-y-3">
           <h3 class="text-xs font-bold text-cyan-400">إضافة مادة جديدة للمنصة</h3>
           <div class="flex gap-2">
-            <input type="text" id="new-subject-name" placeholder="اسم المادة (مثال: Forensic Medicine & Toxicology)" class="flex-grow px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white">
+            <input type="text" id="new-subject-name" placeholder="اسم المادة..." class="flex-grow px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white">
             <button onclick="addSubjectByAdmin()" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-4 rounded-xl text-xs">إضافة المادة</button>
           </div>
         </div>
-
         <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 space-y-3">
           <h3 class="text-xs font-bold text-slate-300">المواد المضافة حالياً</h3>
           <div id="admin-subjects-list" class="space-y-2"></div>
         </div>
       </div>
 
-      <!-- SubTab 2: Smart Quiz & Question Import -->
+      <!-- SubTab 2: Smart Quiz Import -->
       <div id="adm-sec-upload" class="hidden space-y-4">
         <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 space-y-3 text-xs">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -193,33 +185,26 @@
             </div>
             <div>
               <label class="block font-bold text-slate-300 mb-1">اسم الكويز / الاختبار</label>
-              <input type="text" id="upload-quiz-title" placeholder="مثال: Quiz 1 - General Toxicology" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white">
+              <input type="text" id="upload-quiz-title" placeholder="مثال: Quiz 1" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white">
             </div>
           </div>
 
-          <!-- PDF Upload Box -->
           <div class="p-4 border-2 border-dashed border-slate-700 rounded-2xl text-center bg-slate-900/50 space-y-2">
             <i class="fa-solid fa-file-pdf text-3xl text-rose-500"></i>
             <p class="font-bold text-slate-300">رفع ملف PDF يستخرج الأسئلة تلقائياً</p>
             <input type="file" id="pdf-file-input" accept="application/pdf" onchange="extractQuestionsFromPDF(event)" class="hidden">
-            <button onclick="document.getElementById('pdf-file-input').click()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold rounded-xl border border-slate-700">
-              اختر ملف PDF من جهازك
-            </button>
+            <button onclick="document.getElementById('pdf-file-input').click()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold rounded-xl border border-slate-700">اختر ملف PDF</button>
           </div>
 
-          <!-- Text Processing Box -->
           <div>
-            <label class="block font-bold text-slate-300 mb-1">أو انسخ الأسئلة مباشرة هنا:</label>
+            <label class="block font-bold text-slate-300 mb-1">أو انسخ الأسئلة مباشرة:</label>
             <textarea id="bulk-text-input" rows="6" placeholder="Q1: Question text...&#10;A) Option 1&#10;B) Option 2&#10;C) Option 3&#10;D) Option 4&#10;Answer: A" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl font-mono text-xs text-white"></textarea>
           </div>
-
-          <button onclick="processAndSaveQuiz()" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl shadow-lg">
-            نشر الكويز والأسئلة للطلاب 🚀
-          </button>
+          <button onclick="processAndSaveQuiz()" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl shadow-lg">نشر الكويز والأسئلة للطلاب 🚀</button>
         </div>
       </div>
 
-      <!-- SubTab 3: Quiz Analytics & Scores -->
+      <!-- SubTab 3: Quiz Analytics -->
       <div id="adm-sec-stats" class="hidden space-y-4">
         <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 space-y-3">
           <h3 class="text-xs font-bold text-cyan-400">سجل نتائج وحضور الطلاب</h3>
@@ -240,7 +225,7 @@
         </div>
       </div>
 
-      <!-- SubTab 4: Users & Support Chat Management -->
+      <!-- SubTab 4: Users & Support -->
       <div id="adm-sec-users" class="hidden space-y-4">
         <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 space-y-3">
           <h3 class="text-xs font-bold text-cyan-400"><i class="fa-solid fa-headset"></i> رسائل ودعم الطلاب الفني</h3>
@@ -248,9 +233,7 @@
         </div>
 
         <div class="overflow-x-auto border border-slate-700 rounded-2xl bg-slate-800/50">
-          <div class="p-3 bg-slate-900 border-b border-slate-700 text-xs font-bold text-white flex justify-between items-center">
-            <span>قائمة الطلاب المسجلين (فعّل لكل طالب ما يراه من مواد)</span>
-          </div>
+          <div class="p-3 bg-slate-900 border-b border-slate-700 text-xs font-bold text-white">قائمة الطلاب المسجلين</div>
           <table class="w-full text-right text-xs">
             <thead class="bg-slate-900 text-slate-400 border-b border-slate-700">
               <tr>
@@ -268,15 +251,14 @@
 
     <!-- 3. STUDENT DASHBOARD SCREEN -->
     <div id="dashboard-screen" class="space-y-5 hidden">
-      <!-- Progress Bar Banner -->
       <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-4 rounded-2xl border border-slate-700/80 shadow-lg flex flex-col sm:flex-row justify-between items-center gap-3">
         <div>
           <h3 class="text-sm font-bold text-white">أهلاً بك، <span id="student-welcome-name" class="text-cyan-400">دكتور</span> 🩺</h3>
-          <p class="text-[11px] text-slate-400 mt-0.5">تابع كويزاتك وأنهِ اختباراتك بنجاح لتتصدر قائمة الدفعة</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">تابع كويزاتك وأنهِ اختباراتك بنجاح</p>
         </div>
         <div class="w-full sm:w-56 bg-slate-900/80 p-2.5 rounded-xl border border-slate-700/60 space-y-1">
           <div class="flex justify-between text-[11px] font-bold">
-            <span class="text-slate-300">شريط التقدم العام:</span>
+            <span class="text-slate-300">شريط التقدم:</span>
             <span id="progress-text" class="text-cyan-400">0%</span>
           </div>
           <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
@@ -285,13 +267,11 @@
         </div>
       </div>
 
-      <!-- Subjects View -->
       <div id="subjects-container-view" class="space-y-3">
         <h3 class="text-xs font-bold text-slate-400">المواد الدراسية المفعلة لك:</h3>
         <div id="subjects-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
       </div>
 
-      <!-- Quizzes List View -->
       <div id="quizzes-container-view" class="space-y-3 hidden">
         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
           <h3 id="selected-subject-title" class="text-sm font-bold text-white">الكويزات المتاحة</h3>
@@ -301,100 +281,63 @@
       </div>
     </div>
 
-    <!-- 4. LIVE INTERACTIVE QUIZ SCREEN -->
+    <!-- 4. QUIZ SCREEN -->
     <div id="quiz-screen" class="space-y-4 hidden">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2 text-xs">
         <span id="quiz-header-title" class="font-bold text-white">اختبار الكويز</span>
         <span class="bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full font-bold border border-cyan-500/20">سؤال <span id="q-num">1</span>/<span id="q-total">10</span></span>
       </div>
-
-      <!-- Progress Bar -->
       <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
         <div id="progress-bar" class="bg-cyan-500 h-full w-0 transition-all duration-300"></div>
       </div>
-
-      <!-- Question Box -->
       <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700">
         <h3 id="question-text" class="text-sm font-bold text-white leading-relaxed">السؤال...</h3>
       </div>
-
       <div id="options-container" class="space-y-2"></div>
-
-      <button onclick="nextQuestion()" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl text-xs shadow-lg transition">
-        السؤال التالي ➔
-      </button>
+      <button onclick="nextQuestion()" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl text-xs shadow-lg transition">السؤال التالي ➔</button>
     </div>
 
-    <!-- 5. RESULT & RANKING LEADERBOARD SCREEN -->
+    <!-- 5. RESULT SCREEN -->
     <div id="result-screen" class="space-y-5 text-center hidden">
       <div class="p-5 bg-slate-800 border border-slate-700 rounded-3xl space-y-2">
         <div class="w-16 h-16 bg-cyan-500/10 text-cyan-400 rounded-full flex items-center justify-center mx-auto border-4 border-cyan-500 font-black text-xl shadow-lg" id="final-score">0%</div>
         <h3 class="text-base font-bold text-white">اكتمل الاختبار بنجاح!</h3>
       </div>
-
-      <!-- Leaderboard Scope Selection -->
       <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 text-right space-y-3">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-700 pb-2">
-          <h4 class="text-xs font-bold text-slate-300 flex items-center gap-2">
-            <i class="fa-solid fa-trophy text-amber-400"></i> لوحة المتصدرين والترتيب
-          </h4>
+        <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+          <h4 class="text-xs font-bold text-slate-300"><i class="fa-solid fa-trophy text-amber-400"></i> لوحة المتصدرين</h4>
           <div class="flex bg-slate-900 p-1 rounded-xl text-[10px] font-bold border border-slate-700">
             <button onclick="changeLeaderboardScope('quiz')" id="scope-btn-quiz" class="px-2.5 py-1 rounded-lg bg-cyan-600 text-white">الاختبار الحالى</button>
-            <button onclick="changeLeaderboardScope('subject')" id="scope-btn-subject" class="px-2.5 py-1 rounded-lg text-slate-400">المادة كاملة</button>
-            <button onclick="changeLeaderboardScope('global')" id="scope-btn-global" class="px-2.5 py-1 rounded-lg text-slate-400">الترتيب العام للمنصة</button>
+            <button onclick="changeLeaderboardScope('subject')" id="scope-btn-subject" class="px-2.5 py-1 rounded-lg text-slate-400">المادة</button>
+            <button onclick="changeLeaderboardScope('global')" id="scope-btn-global" class="px-2.5 py-1 rounded-lg text-slate-400">العام</button>
           </div>
         </div>
-
         <div id="leaderboard-list-container" class="space-y-2 text-xs max-h-60 overflow-y-auto"></div>
       </div>
-
-      <button onclick="navigateHome()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs border border-slate-700 transition">
-        العودة للرئيسية
-      </button>
+      <button onclick="navigateHome()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs border border-slate-700 transition">العودة للرئيسية</button>
     </div>
 
   </main>
 
-  <!-- STUDENT PROFILE MODAL -->
+  <!-- PROFILE MODAL -->
   <div id="profileModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-3xl p-5 space-y-4 relative shadow-2xl">
       <button onclick="closeProfileModal()" class="absolute top-4 left-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
-
       <div class="text-center space-y-1">
-        <div class="w-16 h-16 bg-gradient-to-tr from-cyan-600 to-teal-400 text-white font-bold text-2xl rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-cyan-500/20" id="prof-avatar">
-          د
-        </div>
-        <h3 class="font-bold text-sm text-white" id="prof-header-name">اسم الحساب</h3>
+        <div class="w-16 h-16 bg-gradient-to-tr from-cyan-600 to-teal-400 text-white font-bold text-2xl rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-cyan-500/20" id="prof-avatar">د</div>
+        <h3 class="font-bold text-sm text-white" id="prof-header-name">حسابي</h3>
       </div>
-
       <form id="profile-edit-form" onsubmit="saveProfileChanges(event)" class="space-y-3 text-xs">
-        <div>
-          <label class="block text-slate-400 mb-1">الاسم بالكامل</label>
-          <input type="text" id="prof-input-name" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white">
+        <div><label class="block text-slate-400 mb-1">الاسم بالكامل</label><input type="text" id="prof-input-name" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white"></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="block text-slate-400 mb-1">الجامعة</label><input type="text" id="prof-input-uni" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white"></div>
+          <div><label class="block text-slate-400 mb-1">الكلية</label><input type="text" id="prof-input-college" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white"></div>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-slate-400 mb-1">الجامعة</label>
-            <input type="text" id="prof-input-uni" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white">
-          </div>
-          <div>
-            <label class="block text-slate-400 mb-1">الكلية</label>
-            <input type="text" id="prof-input-college" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white">
-          </div>
+          <div><label class="block text-slate-400 mb-1">الفرقة</label><input type="text" id="prof-input-year" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white"></div>
+          <div><label class="block text-slate-400 mb-1">العنوان</label><input type="text" id="prof-input-address" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white"></div>
         </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-slate-400 mb-1">الفرقة</label>
-            <input type="text" id="prof-input-year" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white">
-          </div>
-          <div>
-            <label class="block text-slate-400 mb-1">العنوان</label>
-            <input type="text" id="prof-input-address" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white">
-          </div>
-        </div>
-        <button type="submit" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl transition">
-          حفظ التعديلات 💾
-        </button>
+        <button type="submit" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl transition">حفظ التعديلات 💾</button>
       </form>
     </div>
   </div>
@@ -405,11 +348,7 @@
       <span class="font-bold text-xs"><i class="fa-solid fa-headset text-cyan-400 ml-1"></i> تواصل مع الأدمن والدعم الفني</span>
       <button onclick="toggleSupportChatModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
     </div>
-
-    <!-- Messages Container -->
     <div id="supportMessages" class="flex-grow p-3 overflow-y-auto space-y-2 bg-slate-900/50 text-xs"></div>
-
-    <!-- Input Form -->
     <form onsubmit="handleSendSupportMessage(event)" class="p-2 border-t border-slate-700 bg-slate-800 flex gap-2">
       <input type="text" id="supportInput" placeholder="اكتب رسالتك للأدمن..." class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none">
       <button type="submit" class="bg-cyan-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold">إرسال</button>
@@ -421,8 +360,11 @@
     Dr Smart Course &copy; 2026 - جميع الحقوق محفوظة
   </footer>
 
-  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <!-- SCRIPT ENGINE -->
   <script>
+    // تم ربط السيرفر بنجاح
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynzdn6nviJY3QUASNECipUu-LXWw2uDr0z9YSrVCXIaCB_-VF-FHFsSX4qjNjpPBdZwg/exec";
+
     let appState = {
       subjects: [
         { id: "sub_1", title: "Anatomy" },
@@ -445,37 +387,64 @@
     let currentScore = 0;
     let selectedOptIdx = null;
 
-    // App Initialization
-    window.onload = function() {
-      loadDataFromStorage();
+    window.onload = async function() {
+      await loadDataFromServer();
       checkAuthSession();
+      setInterval(syncDataBackground, 10000); // مزامنة تلقائية كل 10 ثواني لضمان جلب كل جديد
     };
 
-    function saveDataToStorage() {
-      localStorage.setItem('dr_smart_db_data_v4', JSON.stringify(appState));
+    async function loadDataFromServer() {
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL);
+        const data = await res.json();
+        if (data && data.subjects) {
+          appState = data;
+        }
+      } catch(e) {
+        console.log("Offline mode or sync error");
+      }
     }
 
-    function loadDataFromStorage() {
-      const saved = localStorage.getItem('dr_smart_db_data_v4');
-      if (saved) {
-        try { appState = JSON.parse(saved); } catch(e) {}
+    async function saveDataToServer() {
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "saveAll", payload: appState })
+        });
+      } catch(e) {
+        console.log("Error saving to server");
       }
+    }
+
+    async function syncDataBackground() {
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL);
+        const data = await res.json();
+        if (data && data.subjects) {
+          appState = data;
+          if (currentUser) {
+            const freshMe = appState.users.find(u => u.phone === currentUser.phone);
+            if (freshMe) { currentUser = freshMe; localStorage.setItem('dr_smart_current_user', JSON.stringify(currentUser)); }
+          }
+          if (currentUser && currentUser.role === 'admin') {
+            renderAdminUsersTable();
+            renderAdminSupportInbox();
+          } else if (currentUser) {
+            renderStudentDashboard();
+            updateStudentProgress();
+          }
+          renderSupportMessages();
+        }
+      } catch(e) {}
     }
 
     function checkAuthSession() {
       const savedUser = localStorage.getItem('dr_smart_current_user');
       if (savedUser) {
         currentUser = JSON.parse(savedUser);
-        
-        // Ensure user instance exists in appState.users
         const uIdx = appState.users.findIndex(u => u.phone === currentUser.phone);
-        if (uIdx !== -1) {
-          currentUser = appState.users[uIdx];
-        } else if (currentUser.role !== 'admin') {
-          appState.users.push(currentUser);
-          saveDataToStorage();
-        }
-
+        if (uIdx !== -1) { currentUser = appState.users[uIdx]; }
+        
         document.getElementById('user-badge').classList.remove('hidden');
         document.getElementById('badge-name').innerText = currentUser.name;
 
@@ -515,7 +484,6 @@
       }
     }
 
-    // AUTHENTICATION
     function switchTab(tab) {
       document.getElementById('login-form').classList.toggle('hidden', tab !== 'login');
       document.getElementById('signup-form').classList.toggle('hidden', tab !== 'signup');
@@ -528,18 +496,8 @@
       const phone = document.getElementById('login-phone').value.trim();
       const pass = document.getElementById('login-password').value.trim();
 
-      // Master Admin Account
       if (phone === "01055751713" && pass === "mo113113113") {
-        currentUser = {
-          name: "System Admin",
-          phone: phone,
-          uni: "جامعة الأزهر",
-          college: "طب بنين",
-          year: "الفرقة الرابعة",
-          address: "القاهرة",
-          role: "admin",
-          allowedSubjects: []
-        };
+        currentUser = { name: "System Admin", phone: phone, uni: "جامعة الأزهر", college: "طب بنين", year: "الفرقة الرابعة", address: "القاهرة", role: "admin", allowedSubjects: [] };
         localStorage.setItem('dr_smart_current_user', JSON.stringify(currentUser));
         checkAuthSession();
         return;
@@ -555,7 +513,7 @@
       }
     }
 
-    function handleSignup(e) {
+    async function handleSignup(e) {
       e.preventDefault();
       const phone = document.getElementById('signup-phone').value.trim();
 
@@ -573,17 +531,16 @@
         year: document.getElementById('signup-year').value.trim(),
         address: document.getElementById('signup-address').value.trim(),
         role: "student",
-        allowedSubjects: [] // Initially no subjects allowed until admin enables them
+        allowedSubjects: []
       };
 
       appState.users.push(newUser);
-      saveDataToStorage();
+      await saveDataToServer();
 
       Swal.fire('تم بنجاح', 'تم إنشاء الحساب بنجاح، بانتظار تفعيل الأدمن لحسابك والمواد!', 'success');
       switchTab('login');
     }
 
-    // DASHBOARD & PROGRESS
     function renderStudentDashboard() {
       const grid = document.getElementById('subjects-cards-grid');
       grid.innerHTML = '';
@@ -593,21 +550,17 @@
           <div class="col-span-2 text-center p-8 bg-slate-800/80 border border-slate-700 rounded-2xl space-y-3">
             <i class="fa-solid fa-lock text-3xl text-amber-400"></i>
             <h4 class="font-bold text-white text-sm">حسابك في انتظار تفعيل المواد من الأدمن</h4>
-            <p class="text-xs text-slate-400">تواصل مع الدعم الفني أو انتظر حتى يقوم الأدمن بتفعيل صلاحيات الوصول للمواد الخاصة بك.</p>
+            <p class="text-xs text-slate-400">تواصل مع الدعم الفني لتمكين المواد.</p>
           </div>`;
         return;
       }
 
       const allowedSubs = appState.subjects.filter(sub => currentUser.allowedSubjects.includes(sub.id));
-
       allowedSubs.forEach(sub => {
         const btn = document.createElement('button');
         btn.onclick = () => openSubjectQuizzes(sub);
         btn.className = "p-4 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 rounded-2xl flex items-center justify-between text-xs font-bold transition shadow-md";
-        btn.innerHTML = `
-          <span class="flex items-center gap-2"><i class="fa-solid fa-book-medical text-cyan-400"></i> ${sub.title}</span>
-          <span class="text-cyan-400">عرض الكويزات ➔</span>
-        `;
+        btn.innerHTML = `<span class="flex items-center gap-2"><i class="fa-solid fa-book-medical text-cyan-400"></i> ${sub.title}</span><span class="text-cyan-400">عرض الكويزات ➔</span>`;
         grid.appendChild(btn);
       });
     }
@@ -618,7 +571,6 @@
       const totalQuizzes = allowedQuizzes.length;
       const myCompleted = new Set(appState.results.filter(r => r.phone === currentUser.phone).map(r => r.quizId)).size;
       const pct = totalQuizzes > 0 ? Math.round((myCompleted / totalQuizzes) * 100) : 0;
-
       document.getElementById('progress-text').innerText = `${pct}% (${myCompleted}/${totalQuizzes})`;
       document.getElementById('overall-progress-bar').style.width = `${pct}%`;
     }
@@ -642,15 +594,7 @@
         const isDone = appState.results.some(r => r.phone === currentUser.phone && r.quizId === q.id);
         const div = document.createElement('div');
         div.className = "p-3.5 bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-between text-xs font-semibold";
-        div.innerHTML = `
-          <div>
-            <span class="block text-white font-bold">${q.title}</span>
-            <span class="text-[10px] text-slate-400">${q.questions ? q.questions.length : 0} سؤال ${isDone ? '• (تم الإنجاز ✓)' : ''}</span>
-          </div>
-          <button onclick="startQuiz('${q.id}')" class="px-3.5 py-1.5 ${isDone ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-cyan-600 hover:bg-cyan-500'} text-white font-bold rounded-xl text-xs transition">
-            ${isDone ? 'إعادة الكويز' : 'ابدأ الكويز ➔'}
-          </button>
-        `;
+        div.innerHTML = `<div><span class="block text-white font-bold">${q.title}</span><span class="text-[10px] text-slate-400">${q.questions ? q.questions.length : 0} سؤال ${isDone ? '• (تم الإنجاز ✓)' : ''}</span></div><button onclick="startQuiz('${q.id}')" class="px-3.5 py-1.5 ${isDone ? 'bg-emerald-600' : 'bg-cyan-600'} text-white font-bold rounded-xl text-xs transition">${isDone ? 'إعادة الكويز' : 'ابدأ الكويز ➔'}</button>`;
         grid.appendChild(div);
       });
     }
@@ -661,19 +605,13 @@
       updateStudentProgress();
     }
 
-    // QUIZ ENGINE
     function startQuiz(quizId) {
       const qz = appState.quizzes.find(q => q.id === quizId);
-      if (!qz || !qz.questions || qz.questions.length === 0) {
-        Swal.fire('تنبيه', 'هذا الكويز لا يحتوي على أسئلة بعد.', 'info');
-        return;
-      }
-
+      if (!qz || !qz.questions || qz.questions.length === 0) return;
       currentQuiz = qz;
       activeQuestions = qz.questions;
       currentQIdx = 0;
       currentScore = 0;
-
       showScreen('quiz-screen');
       document.getElementById('quiz-header-title').innerText = qz.title;
       document.getElementById('q-total').innerText = activeQuestions.length;
@@ -699,29 +637,19 @@
     function selectQuizOption(idx) {
       selectedOptIdx = idx;
       document.querySelectorAll('#options-container > div').forEach((el, i) => {
-        el.className = i === idx ? 
-          "p-3.5 bg-cyan-950/60 border-2 border-cyan-500 rounded-xl cursor-pointer flex items-center transition" : 
-          "p-3.5 bg-slate-800 border border-slate-700 rounded-xl cursor-pointer flex items-center transition";
+        el.className = i === idx ? "p-3.5 bg-cyan-950/60 border-2 border-cyan-500 rounded-xl cursor-pointer flex items-center transition" : "p-3.5 bg-slate-800 border border-slate-700 rounded-xl cursor-pointer flex items-center transition";
       });
     }
 
     function nextQuestion() {
-      if (selectedOptIdx === null) {
-        Swal.fire('تنبيه', 'يرجى اختيار إجابة أولاً!', 'warning');
-        return;
-      }
-
+      if (selectedOptIdx === null) return;
       if (selectedOptIdx === activeQuestions[currentQIdx].correct) currentScore++;
       currentQIdx++;
-
-      if (currentQIdx < activeQuestions.length) {
-        renderCurrentQuestion();
-      } else {
-        finishQuiz();
-      }
+      if (currentQIdx < activeQuestions.length) renderCurrentQuestion();
+      else finishQuiz();
     }
 
-    function finishQuiz() {
+    async function finishQuiz() {
       showScreen('result-screen');
       const pct = Math.round((currentScore / activeQuestions.length) * 100);
       document.getElementById('final-score').innerText = `${pct}%`;
@@ -736,49 +664,31 @@
         total: activeQuestions.length,
         percentage: pct
       });
-      saveDataToStorage();
-
+      await saveDataToServer();
       changeLeaderboardScope('quiz');
     }
 
     function changeLeaderboardScope(scope) {
       ['quiz', 'subject', 'global'].forEach(s => {
-        document.getElementById(`scope-btn-${s}`).className = s === scope ? 
-          "px-2.5 py-1 rounded-lg bg-cyan-600 text-white font-bold" : 
-          "px-2.5 py-1 rounded-lg text-slate-400 font-bold";
+        document.getElementById(`scope-btn-${s}`).className = s === scope ? "px-2.5 py-1 rounded-lg bg-cyan-600 text-white font-bold" : "px-2.5 py-1 rounded-lg text-slate-400 font-bold";
       });
-
       let filtered = [...appState.results];
       if (scope === 'quiz') filtered = filtered.filter(r => r.quizId === currentQuiz.id);
       else if (scope === 'subject') filtered = filtered.filter(r => r.subjectId === currentQuiz.subjectId);
-
       filtered.sort((a, b) => b.percentage - a.percentage);
 
       const container = document.getElementById('leaderboard-list-container');
-      container.innerHTML = '';
-
-      if (filtered.length === 0) {
-        container.innerHTML = `<p class="text-center text-slate-500 py-3">لا توجد نتائج مسجلة لهذا النطاق بعد.</p>`;
-        return;
-      }
-
-      filtered.forEach((item, idx) => {
-        const div = document.createElement('div');
-        div.className = `flex items-center justify-between p-2.5 rounded-xl ${item.phone === currentUser.phone ? 'bg-cyan-950/80 border border-cyan-500 font-bold' : 'bg-slate-800/80'}`;
-        div.innerHTML = `
+      container.innerHTML = filtered.length === 0 ? `<p class="text-center text-slate-500 py-3">لا توجد نتائج مسجلة.</p>` : filtered.map((item, idx) => `
+        <div class="flex items-center justify-between p-2.5 rounded-xl ${item.phone === currentUser.phone ? 'bg-cyan-950/80 border border-cyan-500 font-bold' : 'bg-slate-800/80'}">
           <div class="flex items-center gap-2">
-            <span class="w-6 text-center font-bold ${idx === 0 ? 'text-amber-400' : idx === 1 ? 'text-slate-300' : idx === 2 ? 'text-amber-600' : 'text-slate-500'}">
-              ${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`}
-            </span>
+            <span class="w-6 text-center font-bold">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`}</span>
             <span class="text-white">${item.studentName} ${item.phone === currentUser.phone ? '(أنت)' : ''}</span>
           </div>
           <span class="text-cyan-400 font-bold font-mono">${item.percentage}%</span>
-        `;
-        container.appendChild(div);
-      });
+        </div>
+      `).join('');
     }
 
-    // ADMIN CONTROLS
     function switchAdminSubTab(tab) {
       ['subjects', 'upload', 'stats', 'users'].forEach(t => {
         document.getElementById(`adm-sec-${t}`).classList.add('hidden');
@@ -790,18 +700,14 @@
       if (tab === 'subjects') renderAdminSubjectsList();
       if (tab === 'upload') updateUploadSubjectDropdown();
       if (tab === 'stats') renderQuizStatsTable();
-      if (tab === 'users') {
-        renderAdminUsersTable();
-        renderAdminSupportInbox();
-      }
+      if (tab === 'users') { renderAdminUsersTable(); renderAdminSupportInbox(); }
     }
 
-    function addSubjectByAdmin() {
+    async function addSubjectByAdmin() {
       const name = document.getElementById('new-subject-name').value.trim();
       if (!name) return;
-
       appState.subjects.push({ id: 'sub_' + Date.now(), title: name });
-      saveDataToStorage();
+      await saveDataToServer();
       document.getElementById('new-subject-name').value = '';
       renderAdminSubjectsList();
       Swal.fire('تمت الإضافة', 'تم إضافة المادة بنجاح', 'success');
@@ -810,36 +716,23 @@
     function editSubject(subId) {
       const sub = appState.subjects.find(s => s.id === subId);
       if (!sub) return;
-
       Swal.fire({
-        title: 'تعديل اسم المادة',
-        input: 'text',
-        inputValue: sub.title,
-        showCancelButton: true,
-        confirmButtonText: 'حفظ',
-        cancelButtonText: 'إلغاء'
-      }).then((result) => {
+        title: 'تعديل اسم المادة', input: 'text', inputValue: sub.title, showCancelButton: true, confirmButtonText: 'حفظ'
+      }).then(async (result) => {
         if (result.isConfirmed && result.value.trim()) {
           sub.title = result.value.trim();
-          saveDataToStorage();
+          await saveDataToServer();
           renderAdminSubjectsList();
         }
       });
     }
 
     function deleteSubject(subId) {
-      Swal.fire({
-        title: 'تأكيد الحذف',
-        text: 'هل أنت متأكد من حذف المادة وكل كويزاتها؟',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'نعم، احذف',
-        cancelButtonText: 'إلغاء'
-      }).then((result) => {
+      Swal.fire({ title: 'تأكيد الحذف', icon: 'warning', showCancelButton: true }).then(async (result) => {
         if (result.isConfirmed) {
           appState.subjects = appState.subjects.filter(s => s.id !== subId);
           appState.quizzes = appState.quizzes.filter(q => q.subjectId !== subId);
-          saveDataToStorage();
+          await saveDataToServer();
           renderAdminSubjectsList();
         }
       });
@@ -847,20 +740,15 @@
 
     function renderAdminSubjectsList() {
       const container = document.getElementById('admin-subjects-list');
-      container.innerHTML = '';
-
-      appState.subjects.forEach(sub => {
-        const div = document.createElement('div');
-        div.className = "p-3 bg-slate-900 border border-slate-700 rounded-xl flex justify-between items-center text-xs";
-        div.innerHTML = `
+      container.innerHTML = appState.subjects.map(sub => `
+        <div class="p-3 bg-slate-900 border border-slate-700 rounded-xl flex justify-between items-center text-xs">
           <span class="font-bold text-white">${sub.title}</span>
           <div class="flex gap-2">
-            <button onclick="editSubject('${sub.id}')" class="px-2.5 py-1 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 rounded-lg">تعديل</button>
-            <button onclick="deleteSubject('${sub.id}')" class="px-2.5 py-1 bg-rose-600/20 text-rose-400 border border-rose-500/30 rounded-lg">حذف</button>
+            <button onclick="editSubject('${sub.id}')" class="px-2.5 py-1 bg-cyan-600/20 text-cyan-400 rounded-lg">تعديل</button>
+            <button onclick="deleteSubject('${sub.id}')" class="px-2.5 py-1 bg-rose-600/20 text-rose-400 rounded-lg">حذف</button>
           </div>
-        `;
-        container.appendChild(div);
-      });
+        </div>
+      `).join('');
     }
 
     function updateUploadSubjectDropdown() {
@@ -871,111 +759,65 @@
     async function extractQuestionsFromPDF(event) {
       const file = event.target.files[0];
       if (!file) return;
-
       const fileReader = new FileReader();
       fileReader.onload = async function() {
         const typedarray = new Uint8Array(this.result);
         const pdf = await pdfjsLib.getDocument(typedarray).promise;
         let fullText = '';
-
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
           const textContent = await page.getTextContent();
           fullText += textContent.items.map(item => item.str).join(' ') + '\n\n';
         }
-
         document.getElementById('bulk-text-input').value = fullText;
-        Swal.fire('تم استخراج النص', 'تم استخراج النص من ملف PDF بنجاح.', 'success');
+        Swal.fire('تم الاستخراج', 'تم استخراج النص من PDF بنجاح.', 'success');
       };
       fileReader.readAsArrayBuffer(file);
     }
 
-    function processAndSaveQuiz() {
+    async function processAndSaveQuiz() {
       const subjectId = document.getElementById('upload-subject-select').value;
       const quizTitle = document.getElementById('upload-quiz-title').value.trim();
       const rawText = document.getElementById('bulk-text-input').value.trim();
-
-      if (!subjectId || !quizTitle || !rawText) {
-        Swal.fire('تنبيه', 'يرجى كتابة اسم الكويز والنص بشكل كامل.', 'warning');
-        return;
-      }
+      if (!subjectId || !quizTitle || !rawText) return;
 
       const blocks = rawText.split(/\n\s*\n/);
       let parsedQ = [];
-
       blocks.forEach(b => {
         const lines = b.split('\n').map(l => l.trim()).filter(Boolean);
         if (lines.length >= 5) {
-          const qText = lines[0].replace(/^Q?\d*[\.\:-]?\s*/i, '');
-          const optA = lines[1].replace(/^[A-D1-4][\)\.-]\s*/i, '');
-          const optB = lines[2].replace(/^[A-D1-4][\)\.-]\s*/i, '');
-          const optC = lines[3].replace(/^[A-D1-4][\)\.-]\s*/i, '');
-          const optD = lines[4] ? lines[4].replace(/^[A-D1-4][\)\.-]\s*/i, '') : "";
-
-          let correct = 0;
-          const lastLine = lines[lines.length - 1].toUpperCase();
-          if (lastLine.includes("B") || lastLine.includes("2")) correct = 1;
-          else if (lastLine.includes("C") || lastLine.includes("3")) correct = 2;
-          else if (lastLine.includes("D") || lastLine.includes("4")) correct = 3;
-
           parsedQ.push({
-            question: qText,
-            options: [optA, optB, optC, optD].filter(Boolean),
-            correct: correct
+            question: lines[0].replace(/^Q?\d*[\.\:-]?\s*/i, ''),
+            options: [lines[1], lines[2], lines[3], lines[4]].map(o => o.replace(/^[A-D1-4][\)\.-]\s*/i, '')),
+            correct: lines[lines.length - 1].toUpperCase().includes("B") ? 1 : lines[lines.length - 1].toUpperCase().includes("C") ? 2 : lines[lines.length - 1].toUpperCase().includes("D") ? 3 : 0
           });
         }
       });
 
-      if (parsedQ.length === 0) {
-        Swal.fire('خطأ', 'لم يتم التعرف على أسئلة بتنسيق صحيح.', 'error');
-        return;
-      }
+      if (parsedQ.length === 0) return Swal.fire('خطأ', 'تنسيق الأسئلة غير صحيح', 'error');
 
-      appState.quizzes.push({
-        id: 'quiz_' + Date.now(),
-        subjectId: subjectId,
-        title: quizTitle,
-        questions: parsedQ
-      });
-
-      saveDataToStorage();
+      appState.quizzes.push({ id: 'quiz_' + Date.now(), subjectId: subjectId, title: quizTitle, questions: parsedQ });
+      await saveDataToServer();
       document.getElementById('upload-quiz-title').value = '';
       document.getElementById('bulk-text-input').value = '';
-
-      Swal.fire('تم النشر', `تم نشر الكويز المكون من ${parsedQ.length} سؤالاً بنجاح!`, 'success');
+      Swal.fire('تم النشر', 'تم نشر الكويز بنجاح!', 'success');
     }
 
     function renderQuizStatsTable() {
       const tbody = document.getElementById('quiz-stats-table-body');
-      tbody.innerHTML = appState.results.map(r => `
-        <tr>
-          <td class="p-2.5 font-bold text-white">${r.studentName}</td>
-          <td class="p-2.5 font-mono text-slate-400">${r.phone}</td>
-          <td class="p-2.5 text-slate-300">${r.quizTitle}</td>
-          <td class="p-2.5 font-bold text-cyan-400">${r.score}/${r.total}</td>
-          <td class="p-2.5 font-bold text-emerald-400 font-mono">${r.percentage}%</td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = appState.results.map(r => `<tr><td class="p-2.5 font-bold text-white">${r.studentName}</td><td class="p-2.5 text-slate-400 font-mono">${r.phone}</td><td class="p-2.5 text-slate-300">${r.quizTitle}</td><td class="p-2.5 font-bold text-cyan-400">${r.score}/${r.total}</td><td class="p-2.5 font-bold text-emerald-400">${r.percentage}%</td></tr>`).join('');
     }
 
     function renderAdminUsersTable() {
       const tbody = document.getElementById('admin-users-list');
       const students = appState.users.filter(u => u.role !== 'admin');
-
-      if (students.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500">لا توجد حسابات طلاب مسجلة حتى الآن.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = students.map(u => `
+      tbody.innerHTML = students.length === 0 ? `<tr><td colspan="4" class="p-4 text-center text-slate-500">لا توجد حسابات طلاب مسجلة.</td></tr>` : students.map(u => `
         <tr>
           <td class="p-3 font-bold text-white">${u.name}</td>
           <td class="p-3 font-mono text-slate-400">${u.phone}</td>
           <td class="p-3 text-slate-300">${u.college} / ${u.uni}</td>
           <td class="p-3 text-center">
-            <button onclick="openStudentPermissionsModal('${u.phone}')" class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl">
-              إدارة وتفعيل المواد (${u.allowedSubjects ? u.allowedSubjects.length : 0})
-            </button>
+            <button onclick="openStudentPermissionsModal('${u.phone}')" class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl">إدارة وتفعيل المواد (${u.allowedSubjects ? u.allowedSubjects.length : 0})</button>
           </td>
         </tr>
       `).join('');
@@ -984,148 +826,86 @@
     function openStudentPermissionsModal(phone) {
       const student = appState.users.find(u => u.phone === phone);
       if (!student) return;
-
       if (!student.allowedSubjects) student.allowedSubjects = [];
 
-      let checkboxesHtml = appState.subjects.map(sub => {
-        const isChecked = student.allowedSubjects.includes(sub.id) ? 'checked' : '';
-        return `
-          <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-xl cursor-pointer">
-            <input type="checkbox" value="${sub.id}" ${isChecked} class="student-sub-chk w-4 h-4 text-cyan-600 rounded">
-            <span class="text-white text-xs">${sub.title}</span>
-          </label>
-        `;
-      }).join('');
+      let checkboxesHtml = appState.subjects.map(sub => `
+        <label class="flex items-center gap-2 p-2 bg-slate-800 rounded-xl cursor-pointer">
+          <input type="checkbox" value="${sub.id}" ${student.allowedSubjects.includes(sub.id) ? 'checked' : ''} class="student-sub-chk w-4 h-4 text-cyan-600 rounded">
+          <span class="text-white text-xs">${sub.title}</span>
+        </label>
+      `).join('');
 
       Swal.fire({
         title: `تفعيل مواد الطالب: ${student.name}`,
         html: `<div class="space-y-2 text-right max-h-60 overflow-y-auto">${checkboxesHtml}</div>`,
-        showCancelButton: true,
-        confirmButtonText: 'حفظ الصلاحيات',
-        cancelButtonText: 'إلغاء',
-        preConfirm: () => {
-          const checked = Array.from(document.querySelectorAll('.student-sub-chk:checked')).map(el => el.value);
-          student.allowedSubjects = checked;
-          saveDataToStorage();
+        showCancelButton: true, confirmButtonText: 'حفظ',
+        preConfirm: async () => {
+          student.allowedSubjects = Array.from(document.querySelectorAll('.student-sub-chk:checked')).map(el => el.value);
+          await saveDataToServer();
           renderAdminUsersTable();
         }
       });
     }
 
-    // SUPPORT CHAT SYSTEM
-    function toggleSupportChatModal() {
-      document.getElementById('supportModal').classList.toggle('hidden');
-    }
+    function toggleSupportChatModal() { document.getElementById('supportModal').classList.toggle('hidden'); }
 
     function renderSupportMessages() {
       const container = document.getElementById('supportMessages');
       if (!container) return;
-      container.innerHTML = '';
-
-      let messages = currentUser.role === 'admin' ? 
-        appState.supportMessages : 
-        appState.supportMessages.filter(m => m.senderPhone === currentUser.phone);
-
-      if (messages.length === 0) {
-        container.innerHTML = `<p class="text-center text-slate-500 py-6">لا توجد رسائل دعم فني حالياً.</p>`;
-        return;
-      }
-
-      messages.forEach(msg => {
-        const div = document.createElement('div');
-        div.className = "bg-slate-900 p-2.5 rounded-xl border border-slate-700 space-y-1";
-        div.innerHTML = `
-          <div class="flex justify-between items-center text-[10px]">
-            <span class="font-bold text-cyan-400">${msg.senderName} (${msg.senderPhone})</span>
-          </div>
+      let messages = currentUser.role === 'admin' ? appState.supportMessages : appState.supportMessages.filter(m => m.senderPhone === currentUser.phone);
+      container.innerHTML = messages.length === 0 ? `<p class="text-center text-slate-500 py-6">لا توجد رسائل.</p>` : messages.map(msg => `
+        <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 space-y-1">
+          <div class="font-bold text-cyan-400 text-[10px]">${msg.senderName} (${msg.senderPhone})</div>
           <p class="text-slate-200 text-xs">${msg.text}</p>
           ${msg.reply ? `<div class="bg-cyan-950/60 p-2 rounded-lg border-r-2 border-cyan-400 text-xs text-cyan-200 mt-1"><strong>رد الأدمن:</strong> ${msg.reply}</div>` : ''}
-          ${currentUser.role === 'admin' && !msg.reply ? `<button onclick="replyToSupport('${msg.id}')" class="mt-1 px-2 py-1 bg-cyan-600 text-white rounded text-[10px]">رد على الطالب</button>` : ''}
-        `;
-        container.appendChild(div);
-      });
+          ${currentUser.role === 'admin' && !msg.reply ? `<button onclick="replyToSupport('${msg.id}')" class="mt-1 px-2 py-1 bg-cyan-600 text-white rounded text-[10px]">رد</button>` : ''}
+        </div>
+      `).join('');
     }
 
-    function handleSendSupportMessage(e) {
+    async function handleSendSupportMessage(e) {
       e.preventDefault();
       const input = document.getElementById('supportInput');
       const text = input.value.trim();
       if (!text || !currentUser) return;
-
-      appState.supportMessages.push({
-        id: 'sup_' + Date.now(),
-        senderPhone: currentUser.phone,
-        senderName: currentUser.name,
-        text: text,
-        reply: ""
-      });
-
-      saveDataToStorage();
+      appState.supportMessages.push({ id: 'sup_' + Date.now(), senderPhone: currentUser.phone, senderName: currentUser.name, text: text, reply: "" });
+      await saveDataToServer();
       input.value = '';
       renderSupportMessages();
       Swal.fire('تم الإرسال', 'تم إرسال رسالتك للأدمن بنجاح!', 'success');
     }
 
     function replyToSupport(msgId) {
-      Swal.fire({
-        title: 'الرد على الطالب',
-        input: 'text',
-        showCancelButton: true,
-        confirmButtonText: 'إرسال الرد',
-        cancelButtonText: 'إلغاء'
-      }).then((result) => {
+      Swal.fire({ title: 'الرد على الطالب', input: 'text', showCancelButton: true, confirmButtonText: 'إرسال' }).then(async (result) => {
         if (result.isConfirmed && result.value.trim()) {
           const msg = appState.supportMessages.find(m => m.id === msgId);
-          if (msg) {
-            msg.reply = result.value.trim();
-            saveDataToStorage();
-            renderSupportMessages();
-          }
+          if (msg) { msg.reply = result.value.trim(); await saveDataToServer(); renderSupportMessages(); }
         }
       });
     }
 
-    function renderAdminSupportInbox() {
-      renderSupportMessages();
-    }
+    function renderAdminSupportInbox() { renderSupportMessages(); }
 
-    // PROFILE MODAL
     function openProfileModal() {
       if (!currentUser) return;
       document.getElementById('prof-avatar').innerText = currentUser.name.charAt(0);
       document.getElementById('prof-header-name').innerText = currentUser.name;
-
-      document.getElementById('prof-input-name').value = currentUser.name;
-      document.getElementById('prof-input-uni').value = currentUser.uni;
-      document.getElementById('prof-input-college').value = currentUser.college;
-      document.getElementById('prof-input-year').value = currentUser.year;
-      document.getElementById('prof-input-address').value = currentUser.address;
-
+      ['name', 'uni', 'college', 'year', 'address'].forEach(f => document.getElementById(`prof-input-${f}`).value = currentUser[f]);
       document.getElementById('profileModal').classList.remove('hidden');
     }
 
-    function closeProfileModal() {
-      document.getElementById('profileModal').classList.add('hidden');
-    }
+    function closeProfileModal() { document.getElementById('profileModal').classList.add('hidden'); }
 
-    function saveProfileChanges(e) {
+    async function saveProfileChanges(e) {
       e.preventDefault();
-      currentUser.name = document.getElementById('prof-input-name').value.trim();
-      currentUser.uni = document.getElementById('prof-input-uni').value.trim();
-      currentUser.college = document.getElementById('prof-input-college').value.trim();
-      currentUser.year = document.getElementById('prof-input-year').value.trim();
-      currentUser.address = document.getElementById('prof-input-address').value.trim();
-
+      ['name', 'uni', 'college', 'year', 'address'].forEach(f => currentUser[f] = document.getElementById(`prof-input-${f}`).value.trim());
       const idx = appState.users.findIndex(u => u.phone === currentUser.phone);
       if (idx !== -1) appState.users[idx] = currentUser;
-
+      await saveDataToServer();
       localStorage.setItem('dr_smart_current_user', JSON.stringify(currentUser));
-      saveDataToStorage();
-
       document.getElementById('badge-name').innerText = currentUser.name;
-      document.getElementById('student-welcome-name').innerText = currentUser.name;
       closeProfileModal();
-      Swal.fire('تم الحفظ', 'تم تحديث بياناتك الشخصية بنجاح!', 'success');
+      Swal.fire('تم الحفظ', 'تم التحديث بنجاح!', 'success');
     }
 
     function showScreen(screenId) {
