@@ -311,12 +311,15 @@
 
     <!-- 5. RESULT SCREEN WITH PROFESSIONAL LEADERBOARD -->
     <div id="result-screen" class="space-y-6 text-center hidden">
-      <div class="p-6 bg-dark-800/90 border border-slate-800 rounded-3xl space-y-3 shadow-2xl backdrop-blur-xl">
+      <div class="p-6 bg-dark-800/90 border border-slate-800 rounded-3xl space-y-4 shadow-2xl backdrop-blur-xl">
         <div class="w-20 h-20 bg-gradient-to-tr from-cyan-500/20 to-teal-500/20 text-cyan-400 rounded-3xl flex items-center justify-center mx-auto border-2 border-cyan-500/50 font-black text-2xl shadow-xl shadow-cyan-500/10" id="final-score">0%</div>
         <div class="space-y-1">
           <h3 class="text-lg font-black text-white">أحسنت صنعاً! لقد أتممت الاختبار بنجاح</h3>
           <p class="text-xs text-slate-400">إليك ترتيبك وموقعك بين زملائك في الدفعة</p>
         </div>
+        <button onclick="openReviewModal()" class="px-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl text-xs shadow-lg transition inline-flex items-center gap-2">
+          <i class="fa-solid fa-list-check"></i> مراجعة الإجابات والأسئلة
+        </button>
       </div>
 
       <!-- Professional Leaderboard Card -->
@@ -343,6 +346,18 @@
 
   </main>
 
+  <!-- REVIEW ANSWERS MODAL -->
+  <div id="reviewModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-dark-800 border border-slate-800 w-full max-w-2xl rounded-3xl p-6 space-y-4 relative shadow-2xl flex flex-col max-h-[85vh]">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-sm text-white flex items-center gap-2"><i class="fa-solid fa-clipboard-question text-cyan-400"></i> مراجعة إجابات الاختبار</h3>
+        <button onclick="closeReviewModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+      </div>
+      <div id="review-questions-container" class="flex-grow overflow-y-auto space-y-4 pr-1 text-xs"></div>
+      <button onclick="closeReviewModal()" class="w-full py-3 bg-dark-900 hover:bg-dark-700 border border-slate-800 text-white font-bold rounded-xl transition">إغلاق المراجعة</button>
+    </div>
+  </div>
+
   <!-- PROFILE MODAL -->
   <div id="profileModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
     <div class="bg-dark-800 border border-slate-800 w-full max-w-md rounded-3xl p-6 space-y-4 relative shadow-2xl">
@@ -354,12 +369,12 @@
       <form id="profile-edit-form" onsubmit="saveProfileChanges(event)" class="space-y-3 text-xs">
         <div><label class="block text-slate-400 mb-1">الاسم بالكامل</label><input type="text" id="prof-input-name" required class="w-full px-3.5 py-2.5 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
         <div class="grid grid-cols-2 gap-2.5">
-          <div><label class="block text-slate-400 mb-1">الجامعة</label><input type="text" id="prof-input-uni" required class="w-full px-3.5 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
-          <div><label class="block text-slate-400 mb-1">الكلية</label><input type="text" id="prof-input-college" required class="w-full px-3.5 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
+          <div><label class="block text-slate-400 mb-1">الجامعة</label><input type="text" id="prof-input-uni" required class="w-full px-3 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
+          <div><label class="block text-slate-400 mb-1">الكلية</label><input type="text" id="prof-input-college" required class="w-full px-3 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
         </div>
         <div class="grid grid-cols-2 gap-2.5">
-          <div><label class="block text-slate-400 mb-1">الفرقة</label><input type="text" id="prof-input-year" required class="w-full px-3.5 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
-          <div><label class="block text-slate-400 mb-1">العنوان</label><input type="text" id="prof-input-address" required class="w-full px-3.5 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
+          <div><label class="block text-slate-400 mb-1">الفرقة</label><input type="text" id="prof-input-year" required class="w-full px-3 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
+          <div><label class="block text-slate-400 mb-1">العنوان</label><input type="text" id="prof-input-address" required class="w-full px-3 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
         </div>
         <button type="submit" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl shadow-lg transition">حفظ التعديلات 💾</button>
       </form>
@@ -386,7 +401,7 @@
 
   <!-- SCRIPT ENGINE -->
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwNxKJ5Wx8X1Ae6Kz1uLfRbp_FSb4YzP9wnIUJiQbndh6ZH4MTl9B6ou5JLMCxA2ePZFA/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynzdn6nviJY3QUASNECipUu-LXWw2uDr0z9YSrVCXIaCB_-VF-FHFsSX4qjNjpPBdZwg/exec";
 
     let appState = {
       subjects: [
@@ -409,6 +424,7 @@
     let currentQIdx = 0;
     let currentScore = 0;
     let selectedOptIdx = null;
+    let studentAnswersHistory = [];
 
     window.onload = async function() {
       const savedUser = localStorage.getItem('dr_smart_current_user') || sessionStorage.getItem('dr_smart_current_user');
@@ -691,6 +707,7 @@
       activeQuestions = qz.questions;
       currentQIdx = 0;
       currentScore = 0;
+      studentAnswersHistory = [];
       showScreen('quiz-screen');
       document.getElementById('quiz-header-title').innerText = qz.title;
       document.getElementById('q-total').innerText = activeQuestions.length;
@@ -725,7 +742,19 @@
         Swal.fire('تنبيه', 'يرجى اختيار إجابة أولاً!', 'warning');
         return;
       }
-      if (selectedOptIdx === activeQuestions[currentQIdx].correct) currentScore++;
+      const q = activeQuestions[currentQIdx];
+      const isCorrect = selectedOptIdx === q.correct;
+      if (isCorrect) currentScore++;
+
+      studentAnswersHistory.push({
+        questionIndex: currentQIdx,
+        question: q.question,
+        options: q.options,
+        correctOption: q.correct,
+        selectedOption: selectedOptIdx,
+        isCorrect: isCorrect
+      });
+
       currentQIdx++;
       if (currentQIdx < activeQuestions.length) renderCurrentQuestion();
       else finishQuiz();
@@ -748,6 +777,42 @@
       });
       await saveDataToServer();
       changeLeaderboardScope('quiz');
+    }
+
+    function openReviewModal() {
+      const container = document.getElementById('review-questions-container');
+      container.innerHTML = studentAnswersHistory.map((item, idx) => `
+        <div class="p-4 rounded-2xl border ${item.isCorrect ? 'bg-emerald-950/30 border-emerald-500/40' : 'bg-rose-950/30 border-rose-500/40'} space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-white text-xs">سؤال ${idx + 1}: ${item.question}</span>
+            <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold ${item.isCorrect ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}">
+              ${item.isCorrect ? 'إجابة صحيحة ✓' : 'إجابة خاطئة ✗'}
+            </span>
+          </div>
+          <div class="space-y-1.5 pt-1">
+            ${item.options.map((opt, optIdx) => {
+              let style = "bg-dark-900 border-slate-800 text-slate-300";
+              let badge = String.fromCharCode(65 + optIdx);
+              if (optIdx === item.correctOption) {
+                style = "bg-emerald-900/40 border-emerald-500 text-emerald-200 font-bold";
+                badge += " (الصحيحة)";
+              } else if (optIdx === item.selectedOption && !item.isCorrect) {
+                style = "bg-rose-900/40 border-rose-500 text-rose-200 font-bold";
+                badge += " (إجابتك)";
+              }
+              return `<div class="p-2.5 rounded-xl border ${style} flex items-center gap-2.5">
+                <span class="w-6 h-6 rounded-lg bg-dark-800 flex items-center justify-center text-[10px]">${badge}</span>
+                <span class="text-xs">${opt}</span>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+      `).join('');
+      document.getElementById('reviewModal').classList.remove('hidden');
+    }
+
+    function closeReviewModal() {
+      document.getElementById('reviewModal').classList.add('hidden');
     }
 
     function changeLeaderboardScope(scope) {
@@ -1057,26 +1122,3 @@
   </script>
 </body>
 </html>
-<!-- قسم عرض النتيجة (يظهر بعد انتهاء الكويز) -->
-<div id="resultSection" style="display: none; text-align: center; padding: 30px;">
-  <h2 style="color: #2c3e50;">نتيجة الاختبار</h2>
-  <div id="scoreDisplay" style="font-size: 28px; font-weight: bold; color: #27ae60; margin: 20px 0;">
-    <!-- سيتم وضع الدرجة هنا تلقائياً مثل: 8 من 10 -->
-  </div>
-  
-  <!-- زر مراجعة الإجابات -->
-  <button id="reviewBtn" onclick="showReview()" style="background-color: #3498db; color: white; padding: 12px 25px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 10px;">
-    مراجعة الإجابات
-  </button>
-</div>
-
-<!-- قسم مراجعة الإجابات (مخفي افتراضياً ويظهر عند الضغط على زر المراجعة) -->
-<div id="reviewSection" style="display: none; padding: 20px; text-align: right; direction: rtl;">
-  <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">مراجعة الإجابات</h3>
-  <div id="reviewContainer">
-    <!-- سيتم تعبئة تفاصيل الأسئلة والإجابات هنا برمجياً -->
-  </div>
-  <button onclick="backToResult()" style="background-color: #95a5a6; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; margin-top: 20px;">
-    العودة للنتيجة
-  </button>
-</div>
