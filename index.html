@@ -18,17 +18,8 @@
       theme: {
         extend: {
           colors: {
-            dark: {
-              900: '#070b14',
-              800: '#0f172a',
-              700: '#1e293b',
-              600: '#334155'
-            },
-            brand: {
-              500: '#06b6d4',
-              600: '#0891b2',
-              700: '#0e7490',
-            }
+            dark: { 900: '#070b14', 800: '#0f172a', 700: '#1e293b', 600: '#334155' },
+            brand: { 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490' }
           },
           fontFamily: {
             sans: ['Cairo', 'sans-serif'],
@@ -53,35 +44,35 @@
   <!-- Header / Navbar -->
   <header class="bg-dark-800/95 backdrop-blur-xl border-b border-slate-800/80 sticky top-0 z-50 shadow-2xl">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-18 items-center py-3">
+      <div class="flex justify-between h-20 items-center py-3">
         
-        <!-- Logo -->
-        <div class="flex items-center gap-3 cursor-pointer group" onclick="navigateHome()">
-          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-cyan-600 via-teal-500 to-emerald-400 text-white flex items-center justify-center shadow-lg shadow-cyan-500/25 group-hover:scale-105 transition duration-300">
-            <i class="fa-solid fa-stethoscope text-xl"></i>
+        <!-- Logo & Brand -->
+        <div class="flex items-center gap-3.5 cursor-pointer group" onclick="navigateHome()">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-600 via-teal-500 to-emerald-400 text-white flex items-center justify-center shadow-lg shadow-cyan-500/30 group-hover:scale-105 transition duration-300 border border-cyan-400/30">
+            <i class="fa-solid fa-stethoscope text-2xl"></i>
           </div>
           <div class="flex flex-col">
-            <span class="en-title text-xl font-black tracking-tight text-white flex items-center gap-1.5">
+            <span class="en-title text-2xl font-black tracking-tight text-white flex items-center gap-1.5">
               Dr Smart <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-300">Course</span>
             </span>
-            <span class="text-[10px] text-slate-400 font-semibold tracking-wider">منصة التقييم والتميز الطبي</span>
+            <span class="text-[11px] text-slate-400 font-bold tracking-wider">منصة التقييم والتميز الطبي</span>
           </div>
         </div>
 
         <!-- User Controls -->
         <div class="flex items-center gap-3">
-          <button onclick="toggleSupportChatModal()" class="relative flex items-center gap-2 bg-dark-700/80 hover:bg-dark-600 text-slate-200 font-bold px-3.5 py-2 rounded-xl text-xs transition border border-slate-700/60 shadow-md">
+          <button onclick="toggleSupportChatModal()" class="relative flex items-center gap-2 bg-dark-700/80 hover:bg-dark-600 text-slate-200 font-bold px-3.5 py-2.5 rounded-xl text-xs transition border border-slate-700/60 shadow-md">
             <i class="fa-solid fa-headset text-cyan-400 text-sm"></i>
-            <span class="hidden sm:inline">الدعم الفني للأدمن</span>
-            <span id="support-badge-dot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full border-2 border-dark-800 animate-pulse"></span>
+            <span class="hidden sm:inline">الدعم الفني</span>
+            <span id="support-badge-dot" class="hidden absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-500 rounded-full border-2 border-dark-800 animate-pulse"></span>
           </button>
 
           <div id="user-badge" class="hidden flex items-center gap-2">
-            <button onclick="openProfileModal()" class="bg-dark-700/80 hover:bg-dark-600 text-cyan-300 text-xs px-3.5 py-2 rounded-xl font-bold border border-slate-700/60 flex items-center gap-2 transition shadow-md">
+            <button onclick="openProfileModal()" class="bg-dark-700/80 hover:bg-dark-600 text-cyan-300 text-xs px-3.5 py-2.5 rounded-xl font-bold border border-slate-700/60 flex items-center gap-2 transition shadow-md">
               <i class="fa-solid fa-user-gear text-cyan-400"></i>
               <span id="badge-name">الحساب</span>
             </button>
-            <button onclick="logout()" class="bg-rose-600/90 hover:bg-rose-600 text-white text-xs px-3 py-2 rounded-xl font-bold transition shadow-md shadow-rose-600/20">خروج</button>
+            <button onclick="confirmLogout()" class="bg-rose-600/90 hover:bg-rose-600 text-white text-xs px-3.5 py-2.5 rounded-xl font-bold transition shadow-md shadow-rose-600/20">خروج</button>
           </div>
         </div>
 
@@ -94,8 +85,11 @@
 
     <!-- 1. AUTH SCREEN -->
     <div id="auth-screen" class="max-w-md mx-auto bg-dark-800/90 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6">
-      <div class="text-center space-y-1.5 pb-4 border-b border-slate-800/80">
-        <h2 class="en-title text-2xl font-black text-white">Dr Smart <span class="text-cyan-400">Course</span></h2>
+      <div class="text-center space-y-2 pb-4 border-b border-slate-800/80">
+        <div class="w-14 h-14 bg-gradient-to-tr from-cyan-600 to-teal-400 text-white rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-cyan-500/20 mb-2">
+          <i class="fa-solid fa-stethoscope text-2xl"></i>
+        </div>
+        <h2 class="en-title text-2xl font-black text-white">Dr Smart Course</h2>
         <p class="text-xs text-slate-400 font-medium">سجل دخولك أو أنشئ حسابك الجديد للبدء فوراً</p>
       </div>
 
@@ -113,6 +107,10 @@
         <div>
           <label class="block text-xs font-bold text-slate-300 mb-1.5">كلمة المرور</label>
           <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-4 py-3 bg-dark-900 border border-slate-800 rounded-xl text-xs text-white focus:ring-2 focus:ring-cyan-500 transition">
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="remember-me" class="w-4 h-4 text-cyan-600 rounded bg-dark-900 border-slate-800 cursor-pointer">
+          <label for="remember-me" class="text-xs text-slate-300 font-medium cursor-pointer">تذكرني على هذا الجهاز</label>
         </div>
         <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs shadow-xl shadow-cyan-600/25 transition">
           دخول المنصة ➔
@@ -173,7 +171,7 @@
         <button id="adm-tab-subjects" onclick="switchAdminSubTab('subjects')" class="flex-1 py-2.5 px-3 font-bold rounded-xl bg-cyan-600 text-white shadow-md">إدارة المواد</button>
         <button id="adm-tab-upload" onclick="switchAdminSubTab('upload')" class="flex-1 py-2.5 px-3 font-bold rounded-xl text-slate-400 hover:text-white transition">إضافة كويز (PDF/نص)</button>
         <button id="adm-tab-stats" onclick="switchAdminSubTab('stats')" class="flex-1 py-2.5 px-3 font-bold rounded-xl text-slate-400 hover:text-white transition">إحصائيات الكويزات</button>
-        <button id="adm-tab-users" onclick="switchAdminSubTab('users')" class="flex-1 py-2.5 px-3 font-bold rounded-xl text-slate-400 hover:text-white transition">إدارة الطلاب والدعم</button>
+        <button id="adm-tab-users" onclick="switchAdminSubTab('users')" class="flex-1 py-2.5 px-3 font-bold rounded-xl text-slate-400 hover:text-white transition">إدارة الطلاب</button>
       </div>
 
       <!-- SubTab 1: Subject Management -->
@@ -241,13 +239,8 @@
         </div>
       </div>
 
-      <!-- SubTab 4: Users & Support -->
+      <!-- SubTab 4: Users Management -->
       <div id="adm-sec-users" class="hidden space-y-4">
-        <div class="bg-dark-800/80 p-5 rounded-2xl border border-slate-800 space-y-3.5 shadow-xl">
-          <h3 class="text-xs font-bold text-cyan-400"><i class="fa-solid fa-headset"></i> رسائل ودعم الطلاب الفني</h3>
-          <div id="admin-support-inbox" class="space-y-2.5 max-h-60 overflow-y-auto"></div>
-        </div>
-
         <div class="overflow-x-auto border border-slate-800 rounded-2xl bg-dark-800/50 shadow-xl">
           <div class="p-3.5 bg-dark-900 border-b border-slate-800 text-xs font-bold text-white">قائمة الطلاب المسجلين</div>
           <table class="w-full text-right text-xs">
@@ -311,7 +304,7 @@
       </div>
       <div id="options-container" class="space-y-2.5"></div>
       <div class="flex items-center justify-between pt-2">
-        <span class="text-[11px] text-slate-400 font-medium">💡 نصيحة: يمكنك الضغط على مفتاح <kbd class="px-2 py-1 bg-dark-800 border border-slate-700 rounded text-cyan-400 font-mono">Enter</kbd> في لوحة المفاتيح للانتقال للسؤال التالي فوراً.</span>
+        <span class="text-[11px] text-slate-400 font-medium">💡 نصيحة: يمكنك الضغط على مفتاح <kbd class="px-2 py-1 bg-dark-800 border border-slate-700 rounded text-cyan-400 font-mono">Enter</kbd> للانتقال للسؤال التالي.</span>
         <button onclick="nextQuestion()" class="px-6 py-3.5 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs shadow-xl shadow-cyan-600/30 transition">السؤال التالي ➔</button>
       </div>
     </div>
@@ -376,7 +369,7 @@
   <!-- SUPPORT CHAT MODAL -->
   <div id="supportModal" class="hidden fixed bottom-4 left-4 z-50 w-[calc(100%-2rem)] sm:w-88 bg-dark-800 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden flex flex-col h-[420px] backdrop-blur-xl">
     <div class="bg-dark-900 text-white p-3.5 flex justify-between items-center border-b border-slate-800">
-      <span class="font-bold text-xs flex items-center gap-2"><i class="fa-solid fa-headset text-cyan-400"></i> تواصل مباشر مع الأدمن والدعم الفني</span>
+      <span class="font-bold text-xs flex items-center gap-2"><i class="fa-solid fa-headset text-cyan-400"></i> تواصل مباشر مع الدعم الفني</span>
       <button onclick="toggleSupportChatModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div id="supportMessages" class="flex-grow p-4 overflow-y-auto space-y-3 bg-dark-900/60 text-xs"></div>
@@ -388,7 +381,7 @@
 
   <!-- Footer -->
   <footer class="bg-dark-800/90 border-t border-slate-800/80 py-4 text-center text-slate-500 text-[11px] font-medium">
-    Dr Smart Course &copy; 2026 - جميع الحقوق محفوظة لتميز الطلاب الأطباء
+    Dr Smart Course &copy; 2026 - جميع الحقوق محفوظة
   </footer>
 
   <!-- SCRIPT ENGINE -->
@@ -418,11 +411,22 @@
     let selectedOptIdx = null;
 
     window.onload = async function() {
-      await loadDataFromServer();
-      checkAuthSession();
-      setInterval(syncDataBackground, 4000); // مزامنة حية سريعة كل 4 ثواني لضمان ظهور الطلاب والرسائل فوراً
+      // التحقق الفوري من الجلسة بدون أي وميض
+      const savedUser = localStorage.getItem('dr_smart_current_user') || sessionStorage.getItem('dr_smart_current_user');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        document.getElementById('user-badge').classList.remove('hidden');
+        document.getElementById('badge-name').innerText = currentUser.name;
+        if (currentUser.role === 'admin') showScreen('admin-screen');
+        else showScreen('dashboard-screen');
+      } else {
+        showScreen('auth-screen');
+      }
 
-      // تفعيل زر Enter في اللابتوب للانتقال للسؤال التالي أثناء الاختبار
+      await loadDataFromServer();
+      if (currentUser) checkAuthSession();
+      setInterval(syncDataBackground, 4000);
+
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' && !document.getElementById('quiz-screen').classList.contains('hidden')) {
           e.preventDefault();
@@ -462,7 +466,11 @@
           appState = data;
           if (currentUser) {
             const freshMe = appState.users.find(u => u.phone === currentUser.phone);
-            if (freshMe) { currentUser = freshMe; localStorage.setItem('dr_smart_current_user', JSON.stringify(currentUser)); }
+            if (freshMe) { 
+              currentUser = freshMe; 
+              const storageType = localStorage.getItem('dr_smart_current_user') ? localStorage : sessionStorage;
+              storageType.setItem('dr_smart_current_user', JSON.stringify(currentUser)); 
+            }
           }
           if (currentUser && currentUser.role === 'admin') {
             renderAdminUsersTable();
@@ -472,40 +480,53 @@
             updateStudentProgress();
           }
           renderSupportMessages();
+          checkUnreadNotifications();
         }
       } catch(e) {}
     }
 
     function checkAuthSession() {
-      const savedUser = localStorage.getItem('dr_smart_current_user');
-      if (savedUser) {
-        currentUser = JSON.parse(savedUser);
-        const uIdx = appState.users.findIndex(u => u.phone === currentUser.phone);
-        if (uIdx !== -1) { currentUser = appState.users[uIdx]; }
-        
-        document.getElementById('user-badge').classList.remove('hidden');
-        document.getElementById('badge-name').innerText = currentUser.name;
+      const uIdx = appState.users.findIndex(u => u.phone === currentUser.phone);
+      if (uIdx !== -1) { currentUser = appState.users[uIdx]; }
+      
+      document.getElementById('user-badge').classList.remove('hidden');
+      document.getElementById('badge-name').innerText = currentUser.name;
 
-        if (currentUser.role === 'admin') {
-          showScreen('admin-screen');
-          renderAdminSubjectsList();
-          renderAdminUsersTable();
-          renderQuizStatsTable();
-          renderAdminSupportInbox();
-        } else {
-          showScreen('dashboard-screen');
-          document.getElementById('student-welcome-name').innerText = currentUser.name;
-          renderStudentDashboard();
-          updateStudentProgress();
-        }
+      if (currentUser.role === 'admin') {
+        showScreen('admin-screen');
+        renderAdminSubjectsList();
+        renderAdminUsersTable();
+        renderQuizStatsTable();
+        renderAdminSupportInbox();
       } else {
-        showScreen('auth-screen');
+        showScreen('dashboard-screen');
+        document.getElementById('student-welcome-name').innerText = currentUser.name;
+        renderStudentDashboard();
+        updateStudentProgress();
       }
       renderSupportMessages();
+      checkUnreadNotifications();
+    }
+
+    function confirmLogout() {
+      Swal.fire({
+        title: 'تأكيد الخروج',
+        text: 'هل أنت متأكد أنك تريد تسجيل الخروج من المنصة؟',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'نعم، خروج',
+        cancelButtonText: 'إلغاء',
+        confirmButtonColor: '#e11d48'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          logout();
+        }
+      });
     }
 
     function logout() {
       localStorage.removeItem('dr_smart_current_user');
+      sessionStorage.removeItem('dr_smart_current_user');
       currentUser = null;
       document.getElementById('user-badge').classList.add('hidden');
       showScreen('auth-screen');
@@ -533,18 +554,39 @@
       e.preventDefault();
       const phone = document.getElementById('login-phone').value.trim();
       const pass = document.getElementById('login-password').value.trim();
+      const remember = document.getElementById('remember-me').checked;
 
       if (phone === "01055751713" && pass === "mo113113113") {
         currentUser = { name: "System Admin", phone: phone, uni: "جامعة الأزهر", college: "طب بنين", year: "الفرقة الرابعة", address: "القاهرة", role: "admin", allowedSubjects: [] };
-        localStorage.setItem('dr_smart_current_user', JSON.stringify(currentUser));
+        const storage = remember ? localStorage : sessionStorage;
+        storage.setItem('dr_smart_current_user', JSON.stringify(currentUser));
         checkAuthSession();
         return;
       }
 
       const user = appState.users.find(u => u.phone === phone && u.password === pass);
       if (user) {
+        // التحقق من عدد الأجهزة المتصلة (جهازين كحد أقصى)
+        if (!user.activeSessions) user.activeSessions = [];
+        let deviceId = localStorage.getItem('dr_smart_device_id');
+        if (!deviceId) {
+          deviceId = 'dev_' + Date.now() + Math.random();
+          localStorage.setItem('dr_smart_device_id', deviceId);
+        }
+
+        if (!user.activeSessions.includes(deviceId) && user.activeSessions.length >= 2) {
+          Swal.fire('عذراً', 'تم الوصول للحد الأقصى من الأجهزة (جهازين فقط مسموح بهما لهذا الحساب).', 'error');
+          return;
+        }
+
+        if (!user.activeSessions.includes(deviceId)) {
+          user.activeSessions.push(deviceId);
+          saveDataToServer();
+        }
+
         currentUser = user;
-        localStorage.setItem('dr_smart_current_user', JSON.stringify(currentUser));
+        const storage = remember ? localStorage : sessionStorage;
+        storage.setItem('dr_smart_current_user', JSON.stringify(currentUser));
         checkAuthSession();
       } else {
         Swal.fire('خطأ الدخول', 'رقم الموبايل أو كلمة المرور غير صحيحة.', 'error');
@@ -569,7 +611,8 @@
         year: document.getElementById('signup-year').value.trim(),
         address: document.getElementById('signup-address').value.trim(),
         role: "student",
-        allowedSubjects: []
+        allowedSubjects: [],
+        activeSessions: []
       };
 
       appState.users.push(newUser);
@@ -588,7 +631,7 @@
           <div class="col-span-2 text-center p-10 bg-dark-800/80 border border-slate-800 rounded-3xl space-y-3 shadow-xl">
             <i class="fa-solid fa-lock text-4xl text-amber-400 animate-pulse"></i>
             <h4 class="font-bold text-white text-sm">حسابك في انتظار تفعيل المواد من الأدمن</h4>
-            <p class="text-xs text-slate-400">تواصل مع الدعم الفني الآن لفتح وتفعيل صلاحيات المواد الخاصة بك.</p>
+            <p class="text-xs text-slate-400">تواصل مع الدعم الفني الآن عبر زر الدعم بالأعلى لفتح وتفعيل صلاحيات المواد.</p>
           </div>`;
         return;
       }
@@ -743,7 +786,7 @@
       if (tab === 'subjects') renderAdminSubjectsList();
       if (tab === 'upload') updateUploadSubjectDropdown();
       if (tab === 'stats') renderQuizStatsTable();
-      if (tab === 'users') { renderAdminUsersTable(); renderAdminSupportInbox(); }
+      if (tab === 'users') renderAdminUsersTable();
     }
 
     async function addSubjectByAdmin() {
@@ -853,6 +896,7 @@
 
     function renderAdminUsersTable() {
       const tbody = document.getElementById('admin-users-list');
+      if (!tbody) return;
       const students = appState.users.filter(u => u.role !== 'admin');
       tbody.innerHTML = students.length === 0 ? `<tr><td colspan="4" class="p-5 text-center text-slate-500">لا توجد حسابات طلاب مسجلة حتى الآن.</td></tr>` : students.map(u => `
         <tr>
@@ -890,12 +934,48 @@
       });
     }
 
-    function toggleSupportChatModal() { document.getElementById('supportModal').classList.toggle('hidden'); }
+    // SUPPORT CHAT & NOTIFICATIONS
+    function toggleSupportChatModal() { 
+      document.getElementById('supportModal').classList.toggle('hidden');
+      if (!document.getElementById('supportModal').classList.contains('hidden')) {
+        markMessagesAsRead();
+      }
+    }
+
+    function checkUnreadNotifications() {
+      if (!currentUser) return;
+      let hasUnread = false;
+
+      if (currentUser.role === 'admin') {
+        hasUnread = appState.supportMessages.some(m => !m.adminRead);
+      } else {
+        hasUnread = appState.supportMessages.some(m => m.senderPhone === currentUser.phone && m.reply && !m.studentRead);
+      }
+
+      const dot = document.getElementById('support-badge-dot');
+      if (dot) {
+        dot.classList.toggle('hidden', !hasUnread);
+      }
+    }
+
+    function markMessagesAsRead() {
+      if (!currentUser) return;
+      if (currentUser.role === 'admin') {
+        appState.supportMessages.forEach(m => m.adminRead = true);
+      } else {
+        appState.supportMessages.forEach(m => {
+          if (m.senderPhone === currentUser.phone && m.reply) m.studentRead = true;
+        });
+      }
+      saveDataToServer();
+      checkUnreadNotifications();
+    }
 
     function renderSupportMessages() {
       const container = document.getElementById('supportMessages');
       if (!container) return;
       let messages = currentUser.role === 'admin' ? appState.supportMessages : appState.supportMessages.filter(m => m.senderPhone === currentUser.phone);
+      
       container.innerHTML = messages.length === 0 ? `<p class="text-center text-slate-500 py-8">لا توجد رسائل دعم فني حالياً.</p>` : messages.map(msg => `
         <div class="bg-dark-900 p-3.5 rounded-2xl border border-slate-800 space-y-2 shadow-sm">
           <div class="flex justify-between items-center text-[10px]">
@@ -906,6 +986,7 @@
           ${currentUser.role === 'admin' && !msg.reply ? `<button onclick="replyToSupport('${msg.id}')" class="mt-1 px-3 py-1 bg-cyan-600 text-white rounded-lg text-[10px] font-bold">رد على الطالب</button>` : ''}
         </div>
       `).join('');
+      checkUnreadNotifications();
     }
 
     async function handleSendSupportMessage(e) {
@@ -913,7 +994,17 @@
       const input = document.getElementById('supportInput');
       const text = input.value.trim();
       if (!text || !currentUser) return;
-      appState.supportMessages.push({ id: 'sup_' + Date.now(), senderPhone: currentUser.phone, senderName: currentUser.name, text: text, reply: "" });
+
+      appState.supportMessages.push({ 
+        id: 'sup_' + Date.now(), 
+        senderPhone: currentUser.phone, 
+        senderName: currentUser.name, 
+        text: text, 
+        reply: "",
+        adminRead: false,
+        studentRead: true
+      });
+
       await saveDataToServer();
       input.value = '';
       renderSupportMessages();
@@ -924,7 +1015,12 @@
       Swal.fire({ title: 'الرد على الطالب', input: 'text', showCancelButton: true, confirmButtonText: 'إرسال الرد' }).then(async (result) => {
         if (result.isConfirmed && result.value.trim()) {
           const msg = appState.supportMessages.find(m => m.id === msgId);
-          if (msg) { msg.reply = result.value.trim(); await saveDataToServer(); renderSupportMessages(); }
+          if (msg) { 
+            msg.reply = result.value.trim(); 
+            msg.studentRead = false; // تنبيه للطالب لوصول الرد
+            await saveDataToServer(); 
+            renderSupportMessages(); 
+          }
         }
       });
     }
@@ -943,12 +1039,12 @@
 
     async function saveProfileChanges(e) {
       e.preventDefault();
-      ['name', 'uni', 'college', 'year', 'address'].format ? '' : null;
       ['name', 'uni', 'college', 'year', 'address'].forEach(f => currentUser[f] = document.getElementById(`prof-input-${f}`).value.trim());
       const idx = appState.users.findIndex(u => u.phone === currentUser.phone);
       if (idx !== -1) appState.users[idx] = currentUser;
       await saveDataToServer();
-      localStorage.setItem('dr_smart_current_user', JSON.stringify(currentUser));
+      const storageType = localStorage.getItem('dr_smart_current_user') ? localStorage : sessionStorage;
+      storageType.setItem('dr_smart_current_user', JSON.stringify(currentUser));
       document.getElementById('badge-name').innerText = currentUser.name;
       closeProfileModal();
       Swal.fire('تم الحفظ', 'تم تحديث بياناتك بنجاح!', 'success');
