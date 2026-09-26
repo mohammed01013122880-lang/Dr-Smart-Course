@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dr Smart Course - منصة الاختبارات والتقييم الطبي</title>
+  <title>Dr Smart Course - منصة الاختبارات والتقييم</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -53,9 +53,9 @@
           </div>
           <div class="flex flex-col">
             <span class="en-title text-2xl font-black tracking-tight text-white flex items-center gap-1.5">
-              Dr Smart <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-300">Course</span>
+              Dr Smart Course
             </span>
-            <span class="text-[11px] text-slate-400 font-bold tracking-wider">منصة التقييم والتميز الطبي</span>
+            <span class="text-[11px] text-slate-400 font-bold tracking-wider">منصة الاختبارات والتقييم</span>
           </div>
         </div>
 
@@ -354,12 +354,12 @@
       <form id="profile-edit-form" onsubmit="saveProfileChanges(event)" class="space-y-3 text-xs">
         <div><label class="block text-slate-400 mb-1">الاسم بالكامل</label><input type="text" id="prof-input-name" required class="w-full px-3.5 py-2.5 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
         <div class="grid grid-cols-2 gap-2.5">
-          <div><label class="block text-slate-400 mb-1">الجامعة</label><input type="text" id="prof-input-uni" required class="w-full px-3 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
-          <div><label class="block text-slate-400 mb-1">الكلية</label><input type="text" id="prof-input-college" required class="w-full px-3 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
+          <div><label class="block text-slate-400 mb-1">الجامعة</label><input type="text" id="prof-input-uni" required class="w-full px-3.5 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
+          <div><label class="block text-slate-400 mb-1">الكلية</label><input type="text" id="prof-input-college" required class="w-full px-3.5 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
         </div>
         <div class="grid grid-cols-2 gap-2.5">
-          <div><label class="block text-slate-400 mb-1">الفرقة</label><input type="text" id="prof-input-year" required class="w-full px-3 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
-          <div><label class="block text-slate-400 mb-1">العنوان</label><input type="text" id="prof-input-address" required class="w-full px-3 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
+          <div><label class="block text-slate-400 mb-1">الفرقة</label><input type="text" id="prof-input-year" required class="w-full px-3.5 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
+          <div><label class="block text-slate-400 mb-1">العنوان</label><input type="text" id="prof-input-address" required class="w-full px-3.5 py-2 bg-dark-900 border border-slate-800 rounded-xl text-white"></div>
         </div>
         <button type="submit" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl shadow-lg transition">حفظ التعديلات 💾</button>
       </form>
@@ -411,7 +411,6 @@
     let selectedOptIdx = null;
 
     window.onload = async function() {
-      // التحقق الفوري من الجلسة بدون أي وميض
       const savedUser = localStorage.getItem('dr_smart_current_user') || sessionStorage.getItem('dr_smart_current_user');
       if (savedUser) {
         currentUser = JSON.parse(savedUser);
@@ -566,7 +565,6 @@
 
       const user = appState.users.find(u => u.phone === phone && u.password === pass);
       if (user) {
-        // التحقق من عدد الأجهزة المتصلة (جهازين كحد أقصى)
         if (!user.activeSessions) user.activeSessions = [];
         let deviceId = localStorage.getItem('dr_smart_device_id');
         if (!deviceId) {
@@ -936,8 +934,9 @@
 
     // SUPPORT CHAT & NOTIFICATIONS
     function toggleSupportChatModal() { 
-      document.getElementById('supportModal').classList.toggle('hidden');
-      if (!document.getElementById('supportModal').classList.contains('hidden')) {
+      const modal = document.getElementById('supportModal');
+      modal.classList.toggle('hidden');
+      if (!modal.classList.contains('hidden')) {
         markMessagesAsRead();
       }
     }
@@ -1017,7 +1016,7 @@
           const msg = appState.supportMessages.find(m => m.id === msgId);
           if (msg) { 
             msg.reply = result.value.trim(); 
-            msg.studentRead = false; // تنبيه للطالب لوصول الرد
+            msg.studentRead = false; 
             await saveDataToServer(); 
             renderSupportMessages(); 
           }
