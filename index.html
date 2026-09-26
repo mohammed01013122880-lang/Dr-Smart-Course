@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dr Smart Course - منصة الاختبارات والتقييم</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+            }
+          },
+          fontFamily: {
+            sans: ['Cairo', 'sans-serif'],
+            en: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: #f8fafc; }
+    .en-title { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .blur-protection { filter: blur(16px); pointer-events: none; user-select: none; }
+  </style>
+</head>
+<body class="h-full flex flex-col justify-between antialiased">
+
+  <!-- Header / Navbar -->
+  <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        
+        <!-- Logo -->
+        <div class="flex items-center gap-3 cursor-pointer" onclick="showScreen('dashboard-screen')">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-teal-500 text-white flex items-center justify-center shadow-md shadow-cyan-500/20">
+            <i class="fa-solid fa-graduation-cap text-lg"></i>
+          </div>
+          <div class="flex flex-col">
+            <span class="en-title text-xl font-black tracking-tight text-white">Dr Smart <span class="text-cyan-400">Course</span></span>
+            <span class="text-[10px] text-slate-400 font-medium">منصة الاختبارات والتقييم</span>
+          </div>
+        </div>
+
+        <!-- User Badge & Actions -->
+        <div class="flex items-center gap-3">
+          <button onclick="toggleChatModal()" class="relative flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-3 py-1.5 rounded-xl text-xs transition border border-slate-700">
+            <i class="fa-solid fa-comments text-cyan-400"></i>
+            <span class="hidden sm:inline">الشات</span>
+            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
+          </button>
+
+          <div id="user-badge" class="hidden flex items-center gap-2">
+            <span id="badge-name" class="bg-slate-800 text-cyan-300 text-xs px-3 py-1 rounded-xl font-bold border border-slate-700">دكتور</span>
+            <button onclick="logout()" class="bg-rose-600/80 hover:bg-rose-600 text-white text-xs px-2.5 py-1 rounded-xl font-bold transition">خروج</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER -->
+  <main id="mainApp" class="flex-grow max-w-5xl w-full mx-auto px-4 py-6">
+
+    <!-- 1. AUTH SCREEN (تسجيل الدخول بالموبايل / إنشاء حساب) -->
+    <div id="auth-screen" class="max-w-md mx-auto bg-slate-800/90 border border-slate-700/80 rounded-3xl p-6 shadow-2xl space-y-5">
+      <div class="flex bg-slate-900 p-1 rounded-2xl border border-slate-700/60">
+        <button id="tab-login-btn" onclick="switchTab('login')" class="flex-1 py-2 text-xs font-bold rounded-xl bg-cyan-600 text-white shadow-md transition">تسجيل الدخول</button>
+        <button id="tab-signup-btn" onclick="switchTab('signup')" class="flex-1 py-2 text-xs font-bold rounded-xl text-slate-400 hover:text-white transition">حساب جديد</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">رقم الموبايل</label>
+          <input type="tel" id="login-phone" required placeholder="010xxxxxxxx" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:ring-2 focus:ring-cyan-500">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">كلمة المرور</label>
+          <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:ring-2 focus:ring-cyan-500">
+        </div>
+        <button type="submit" id="login-btn" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl text-xs shadow-lg shadow-cyan-600/30 transition">
+          دخول المنصة ➔
+        </button>
+      </form>
+
+      <!-- Sign Up Form -->
+      <form id="signup-form" onsubmit="handleSignup(event)" class="space-y-3 hidden">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">الاسم بالكامل</label>
+          <input type="text" id="signup-name" required placeholder="د. اسمك الكريم" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">رقم الموبايل</label>
+          <input type="tel" id="signup-phone" required placeholder="010xxxxxxxx" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">كلمة المرور</label>
+          <input type="password" id="signup-password" required placeholder="••••••••" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">الكلية / الجامعة</label>
+          <input type="text" id="signup-college" required placeholder="مثال: طب الأزهر بنين القاهرة" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white">
+        </div>
+        <button type="submit" id="signup-btn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs shadow-lg shadow-emerald-600/30 transition">
+          إنشاء حساب 🚀
+        </button>
+      </form>
+    </div>
+
+    <!-- 2. ADMIN DASHBOARD SCREEN -->
+    <div id="admin-screen" class="space-y-5 hidden">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h2 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-user-shield text-cyan-400"></i> لوحة تحكم الأدمن
+        </h2>
+        <span class="bg-rose-500/10 text-rose-400 text-xs font-bold px-3 py-1 rounded-full border border-rose-500/20">System Admin</span>
+      </div>
+
+      <div class="flex bg-slate-800 p-1 rounded-xl text-xs border border-slate-700">
+        <button id="admin-tab-users-btn" onclick="switchAdminTab('users')" class="flex-1 py-2 font-bold rounded-lg bg-cyan-600 text-white shadow">الطلاب المسجلين</button>
+        <button id="admin-tab-questions-btn" onclick="switchAdminTab('questions')" class="flex-1 py-2 font-bold rounded-lg text-slate-400">رفع أسئلة (مجمع)</button>
+      </div>
+
+      <!-- Students Tab -->
+      <div id="admin-users-tab">
+        <div class="overflow-x-auto border border-slate-700 rounded-2xl bg-slate-800/50">
+          <table class="w-full text-right text-xs">
+            <thead class="bg-slate-900 text-slate-400 border-b border-slate-700">
+              <tr>
+                <th class="p-3">الاسم</th>
+                <th class="p-3">الموبايل</th>
+                <th class="p-3">الحالة</th>
+                <th class="p-3 text-center">الإجراء</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-list" class="divide-y divide-slate-700/50"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Bulk Questions Upload Tab -->
+      <div id="admin-questions-tab" class="hidden space-y-3">
+        <form onsubmit="handleBulkUpload(event)" class="space-y-3 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">المادة</label>
+              <select id="bulk-subject" required class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white">
+                <option value="Anatomy">Anatomy</option>
+                <option value="Physiology">Physiology</option>
+                <option value="Biochemistry">Biochemistry</option>
+                <option value="Histology">Histology</option>
+                <option value="Pathology">Pathology</option>
+                <option value="Pharmacology">Pharmacology</option>
+                <option value="Forensic">Forensic Medicine & Toxicology</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">اسم المحاضرة / الاختبار</label>
+              <input type="text" id="bulk-quizid" required placeholder="Lecture 1" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white">
+            </div>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1">انسخ الأسئلة بالتنسيق (سؤال + 4 خيارات + الإجابة)</label>
+            <textarea id="bulk-text" rows="7" required placeholder="Q1: Question text...&#10;A) Option 1&#10;B) Option 2&#10;C) Option 3&#10;D) Option 4&#10;Answer: A" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl font-mono text-xs text-white"></textarea>
+          </div>
+          <button type="submit" id="bulk-upload-btn" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl transition">
+            رفع وتفنيد الأسئلة 🚀
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 3. STUDENT DASHBOARD SCREEN -->
+    <div id="dashboard-screen" class="space-y-5 hidden">
+      <div id="subjects-grid" class="space-y-3">
+        <h3 class="text-xs font-bold text-slate-400">اختر المادة للبدء:</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button onclick="openSubject('Anatomy')" class="p-4 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 rounded-2xl flex items-center justify-between text-xs font-bold transition">
+            <span class="flex items-center gap-2"><i class="fa-solid fa-bone text-cyan-400"></i> Anatomy</span>
+            <span class="text-cyan-400">الاختبارات ➔</span>
+          </button>
+          <button onclick="openSubject('Physiology')" class="p-4 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 rounded-2xl flex items-center justify-between text-xs font-bold transition">
+            <span class="flex items-center gap-2"><i class="fa-solid fa-heart-pulse text-rose-400"></i> Physiology</span>
+            <span class="text-cyan-400">الاختبارات ➔</span>
+          </button>
+          <button onclick="openSubject('Biochemistry')" class="p-4 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 rounded-2xl flex items-center justify-between text-xs font-bold transition">
+            <span class="flex items-center gap-2"><i class="fa-solid fa-vial text-amber-400"></i> Biochemistry</span>
+            <span class="text-cyan-400">الاختبارات ➔</span>
+          </button>
+          <button onclick="openSubject('Histology')" class="p-4 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 rounded-2xl flex items-center justify-between text-xs font-bold transition">
+            <span class="flex items-center gap-2"><i class="fa-solid fa-microscope text-emerald-400"></i> Histology</span>
+            <span class="text-cyan-400">الاختبارات ➔</span>
+          </button>
+          <button onclick="openSubject('Forensic')" class="p-4 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 rounded-2xl flex items-center justify-between text-xs font-bold transition sm:col-span-2">
+            <span class="flex items-center gap-2"><i class="fa-solid fa-skull text-purple-400"></i> Forensic Medicine & Toxicology</span>
+            <span class="text-cyan-400">الاختبارات ➔</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="quizzes-list" class="space-y-3 hidden">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h3 id="subject-title" class="text-sm font-bold text-white">اختبارات المادة</h3>
+          <button onclick="backToSubjects()" class="text-xs text-cyan-400 font-bold">⬅ العودة للمواد</button>
+        </div>
+        <div id="quizzes-container" class="space-y-2"></div>
+      </div>
+    </div>
+
+    <!-- 4. LIVE INTERACTIVE QUIZ SCREEN -->
+    <div id="quiz-screen" class="space-y-4 hidden">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2 text-xs">
+        <span id="quiz-header-title" class="font-bold text-white">اختبار المحاضرة</span>
+        <span class="bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full font-bold border border-cyan-500/20">سؤال <span id="q-num">1</span>/<span id="q-total">10</span></span>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+        <div id="progress-bar" class="bg-cyan-500 h-full w-0 transition-all duration-300"></div>
+      </div>
+
+      <!-- Question Box -->
+      <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700">
+        <h3 id="question-text" class="text-sm font-bold text-white leading-relaxed">السؤال يظهر هنا...</h3>
+      </div>
+
+      <div id="options-container" class="space-y-2"></div>
+
+      <button onclick="nextQuestion()" class="w-full py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl text-xs shadow-lg transition">
+        السؤال التالي ➔
+      </button>
+    </div>
+
+    <!-- 5. RESULT & RANKING LEADERBOARD SCREEN -->
+    <div id="result-screen" class="space-y-5 text-center hidden">
+      <div class="p-5 bg-slate-800 border border-slate-700 rounded-3xl">
+        <div class="w-16 h-16 bg-cyan-500/10 text-cyan-400 rounded-full flex items-center justify-center mx-auto border-4 border-cyan-500 font-black text-xl shadow-lg" id="final-score">0%</div>
+        <h3 class="text-base font-bold text-white mt-3">اكتمل الاختبار بنجاح!</h3>
+        <div id="student-rank-badge" class="mt-2 inline-block bg-amber-500/10 text-amber-400 text-xs font-bold px-4 py-1.5 rounded-full border border-amber-500/20">
+          🏆 ترتيبك: جاري الحساب...
+        </div>
+      </div>
+
+      <!-- Leaderboard -->
+      <div class="border border-slate-700 rounded-2xl p-4 bg-slate-800/50 text-right max-h-64 overflow-y-auto">
+        <h4 class="text-xs font-bold text-slate-300 mb-3 border-b border-slate-700 pb-2 flex items-center gap-2">
+          <i class="fa-solid fa-trophy text-amber-400"></i> لوحة الأوائل والترتيب
+        </h4>
+        <div id="leaderboard-list" class="space-y-2 text-xs"></div>
+      </div>
+
+      <button onclick="backToSubjects()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs border border-slate-700 transition">
+        العودة للرئيسية
+      </button>
+    </div>
+
+  </main>
+
+  <!-- CHAT MODAL -->
+  <div id="chatModal" class="hidden fixed bottom-4 left-4 z-50 w-[calc(100%-2rem)] sm:w-80 bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 overflow-hidden flex flex-col h-96">
+    <div class="bg-slate-900 text-white p-3 flex justify-between items-center border-b border-slate-700">
+      <span class="font-bold text-xs"><i class="fa-solid fa-comments text-cyan-400 ml-1"></i> شات دكاترة الدفعة</span>
+      <button onclick="toggleChatModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="chatMessages" class="flex-grow p-3 overflow-y-auto space-y-2 bg-slate-900/50 text-xs">
+      <div class="bg-slate-800 p-2 rounded-xl border border-slate-700">
+        <span class="font-bold text-cyan-400 block text-[10px]">د. محمد</span>
+        بالتوفيق لجميع الدكاترة في اختبارات المنصة!
+      </div>
+    </div>
+    <form onsubmit="handleSendMessage(event)" class="p-2 border-t border-slate-700 bg-slate-800 flex gap-2">
+      <input type="text" id="chatInput" placeholder="اكتب رسالتك..." class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none">
+      <button type="submit" class="bg-cyan-600 text-white px-3 py-1.5 rounded-xl text-xs">إرسال</button>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 border-t border-slate-800 py-3 text-center text-slate-500 text-[11px]">
+    Dr Smart Course &copy; 2026 - جميع الحقوق محفوظة
+  </footer>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw27o9C_5R6pQKXSZJd0P8K6M459b-LWM0mIs01RKqczXeePdVaU5UKUmtQsC0Bt2B36w/exec";
+    
+    let currentUser = null;
+    let currentSubject = "";
+    let currentQuizId = "";
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let selectedOptionIndex = null;
+
+    // فحص الجلسة المحفوظة تلقائياً
+    window.onload = function() {
+      const savedUser = localStorage.getItem('dr_smart_user');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        document.getElementById('user-badge').classList.remove('hidden');
+        document.getElementById('badge-name').innerText = currentUser.name;
+        
+        if (currentUser.role === 'admin') {
+          showScreen('admin-screen');
+          loadAdminUsers();
+        } else if (currentUser.status === "Active") {
+          showScreen('dashboard-screen');
+        } else {
+          Swal.fire('حسابك قيد التفعيل', 'يرجى التواصل مع الأدمن لتفعيل الحساب.', 'info');
+        }
+      }
+    };
+
+    function logout() {
+      localStorage.removeItem('dr_smart_user');
+      currentUser = null;
+      document.getElementById('user-badge').classList.add('hidden');
+      showScreen('auth-screen');
+    }
+
+    function switchTab(tab) {
+      document.getElementById('login-form').classList.toggle('hidden', tab !== 'login');
+      document.getElementById('signup-form').classList.toggle('hidden', tab !== 'signup');
+      document.getElementById('tab-login-btn').className = tab === 'login' ? 'flex-1 py-2 text-xs font-bold rounded-xl bg-cyan-600 text-white shadow' : 'flex-1 py-2 text-xs font-bold rounded-xl text-slate-400';
+      document.getElementById('tab-signup-btn').className = tab === 'signup' ? 'flex-1 py-2 text-xs font-bold rounded-xl bg-emerald-600 text-white shadow' : 'flex-1 py-2 text-xs font-bold rounded-xl text-slate-400';
+    }
+
+    function switchAdminTab(tab) {
+      document.getElementById('admin-users-tab').classList.toggle('hidden', tab !== 'users');
+      document.getElementById('admin-questions-tab').classList.toggle('hidden', tab !== 'questions');
+      document.getElementById('admin-tab-users-btn').className = tab === 'users' ? 'flex-1 py-2 font-bold rounded-lg bg-cyan-600 text-white shadow' : 'flex-1 py-2 font-bold rounded-lg text-slate-400';
+      document.getElementById('admin-tab-questions-btn').className = tab === 'questions' ? 'flex-1 py-2 font-bold rounded-lg bg-cyan-600 text-white shadow' : 'flex-1 py-2 font-bold rounded-lg text-slate-400';
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const phone = document.getElementById('login-phone').value.trim();
+      const password = document.getElementById('login-password').value.trim();
+
+      // حساب الأدمن المباشر
+      if (phone === "01055751713" && password === "mo113113113") {
+        currentUser = { name: "System Admin", phone: phone, role: "admin" };
+        localStorage.setItem('dr_smart_user', JSON.stringify(currentUser));
+        document.getElementById('user-badge').classList.remove('hidden');
+        document.getElementById('badge-name').innerText = "Admin";
+        showScreen('admin-screen');
+        loadAdminUsers();
+        return;
+      }
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: "login", phone: phone, password: password })
+        });
+        const data = await res.json();
+
+        if (data.status === "success") {
+          currentUser = data.user;
+          localStorage.setItem('dr_smart_user', JSON.stringify(currentUser));
+          document.getElementById('user-badge').classList.remove('hidden');
+          document.getElementById('badge-name').innerText = currentUser.name;
+
+          if (currentUser.status === "Active") {
+            showScreen('dashboard-screen');
+          } else {
+            Swal.fire('حسابك قيد التفعيل', 'يرجى الانتظار حتى يقوم الأدمن بتفعيل حسابك.', 'warning');
+          }
+        } else {
+          Swal.fire('خطأ في الدخول', data.message, 'error');
+        }
+      } catch (err) {
+        Swal.fire('خطأ اتصال', 'يرجى التأكد من الاتصال بالإنترنت والتحقق من الرابط.', 'error');
+      }
+    }
+
+    async function handleSignup(e) {
+      e.preventDefault();
+      const name = document.getElementById('signup-name').value.trim();
+      const phone = document.getElementById('signup-phone').value.trim();
+      const password = document.getElementById('signup-password').value.trim();
+      const college = document.getElementById('signup-college').value.trim();
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: "signup", name, phone, password, college })
+        });
+        const data = await res.json();
+        Swal.fire(data.status === "success" ? "تم بنجاح" : "خطأ", data.message, data.status === "success" ? "success" : "error");
+        if (data.status === "success") switchTab('login');
+      } catch (err) {
+        Swal.fire('خطأ', 'تعذر إرسال الطلب.', 'error');
+      }
+    }
+
+    async function loadAdminUsers() {
+      const res = await fetch(SCRIPT_URL + "?action=getUsers");
+      const users = await res.json();
+      const container = document.getElementById('admin-users-list');
+      container.innerHTML = users.map(u => `
+        <tr>
+          <td class="p-3 font-semibold text-white">${u.name}</td>
+          <td class="p-3 text-slate-400 font-mono">${u.phone}</td>
+          <td class="p-3"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${u.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}">${u.status}</span></td>
+          <td class="p-3 text-center">
+            <button onclick="toggleUserStatus('${u.phone}')" class="px-3 py-1 bg-cyan-600 text-white font-bold rounded-lg text-[10px] shadow">${u.status === 'Active' ? 'إيقاف' : 'تفعيل'}</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function toggleUserStatus(phone) {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: "toggleStatus", phone: phone })
+      });
+      loadAdminUsers();
+    }
+
+    async function handleBulkUpload(e) {
+      e.preventDefault();
+      const subject = document.getElementById('bulk-subject').value;
+      const quizId = document.getElementById('bulk-quizid').value.trim();
+      const rawText = document.getElementById('bulk-text').value.trim();
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: "addBulkQuestions", subject, quizId, rawText })
+        });
+        const data = await res.json();
+        Swal.fire('رفع الأسئلة', data.message, data.status === "success" ? "success" : "error");
+        if (data.status === "success") document.getElementById('bulk-text').value = "";
+      } catch (err) {
+        Swal.fire('خطأ', 'فشل رفع الأسئلة. تحقق من التنسيق.', 'error');
+      }
+    }
+
+    function openSubject(subject) {
+      currentSubject = subject;
+      document.getElementById('subjects-grid').classList.add('hidden');
+      document.getElementById('quizzes-list').classList.remove('hidden');
+      document.getElementById('subject-title').innerText = `${subject} Quizzes`;
+
+      const container = document.getElementById('quizzes-container');
+      container.innerHTML = ["Lecture 1", "Lecture 2", "Lecture 3", "Lecture 4"].map(lec => `
+        <button onclick="startQuiz('${lec}')" class="w-full p-3.5 bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-between text-xs font-semibold hover:border-cyan-500 transition">
+          <span>📝 Quiz on ${lec}</span>
+          <span class="text-cyan-400 font-bold">ابدأ ➔</span>
+        </button>
+      `).join('');
+    }
+
+    function backToSubjects() {
+      showScreen('dashboard-screen');
+      document.getElementById('subjects-grid').classList.remove('hidden');
+      document.getElementById('quizzes-list').classList.add('hidden');
+    }
+
+    async function startQuiz(quizId) {
+      currentQuizId = quizId;
+      showScreen('quiz-screen');
+      document.getElementById('quiz-header-title').innerText = `${currentSubject} - ${quizId}`;
+
+      const res = await fetch(SCRIPT_URL + `?action=getQuestions&subject=${encodeURIComponent(currentSubject)}&quizId=${encodeURIComponent(quizId)}`);
+      questions = await res.json();
+      currentQuestionIndex = 0;
+      score = 0;
+
+      if (questions.length === 0) {
+        Swal.fire('تنبيه', 'لم يتم رفع أسئلة لهذه المحاضرة بعد.', 'info');
+        backToSubjects();
+        return;
+      }
+      document.getElementById('q-total').innerText = questions.length;
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      selectedOptionIndex = null;
+      const q = questions[currentQuestionIndex];
+      document.getElementById('q-num').innerText = currentQuestionIndex + 1;
+      document.getElementById('question-text').innerText = `${currentQuestionIndex + 1}. ${q.question}`;
+      document.getElementById('progress-bar').style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+
+      const container = document.getElementById('options-container');
+      container.innerHTML = q.options.map((opt, idx) => `
+        <div onclick="selectOption(${idx})" id="opt-${idx}" class="p-3.5 bg-slate-800 border border-slate-700 rounded-xl cursor-pointer flex items-center transition hover:border-cyan-500">
+          <div class="w-6 h-6 rounded-full border border-slate-600 flex items-center justify-center text-xs font-bold text-slate-400 ml-3">${String.fromCharCode(65 + idx)}</div>
+          <span class="text-xs font-medium text-slate-200">${opt}</span>
+        </div>
+      `).join('');
+    }
+
+    function selectOption(idx) {
+      selectedOptionIndex = idx;
+      document.querySelectorAll('#options-container > div').forEach((el, i) => {
+        if (i === idx) {
+          el.className = "p-3.5 bg-cyan-950/60 border-2 border-cyan-500 rounded-xl cursor-pointer flex items-center transition";
+        } else {
+          el.className = "p-3.5 bg-slate-800 border border-slate-700 rounded-xl cursor-pointer flex items-center transition";
+        }
+      });
+    }
+
+    function nextQuestion() {
+      if (selectedOptionIndex === null) {
+        Swal.fire('تنبيه', 'يرجى اختيار إجابة أولاً!', 'warning');
+        return;
+      }
+
+      if (selectedOptionIndex === questions[currentQuestionIndex].correct) score++;
+      currentQuestionIndex++;
+
+      if (currentQuestionIndex < questions.length) {
+        loadQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    async function finishQuiz() {
+      showScreen('result-screen');
+      const pct = Math.round((score / questions.length) * 100);
+      document.getElementById('final-score').innerText = `${pct}%`;
+
+      const quizFullId = `${currentSubject}-${currentQuizId}`;
+
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: "saveResult",
+          name: currentUser.name,
+          phone: currentUser.phone,
+          quizId: quizFullId,
+          score: score,
+          percentage: `${pct}%`
+        })
+      });
+
+      const res = await fetch(SCRIPT_URL + `?action=getLeaderboard&quizId=${encodeURIComponent(quizFullId)}`);
+      const leaderboard = await res.json();
+
+      let studentRank = leaderboard.findIndex(item => String(item.phone) === String(currentUser.phone)) + 1;
+      if (studentRank === 0) studentRank = leaderboard.length;
+
+      document.getElementById('student-rank-badge').innerText = `🏆 ترتيبك: المركز #${studentRank} من أصل ${leaderboard.length} طالب`;
+
+      document.getElementById('leaderboard-list').innerHTML = leaderboard.map((item, idx) => `
+        <div class="flex items-center justify-between p-2.5 rounded-xl ${String(item.phone) === String(currentUser.phone) ? 'bg-cyan-950/80 border border-cyan-500 font-bold' : 'bg-slate-800/80'}">
+          <div class="flex items-center gap-2">
+            <span class="w-6 text-center font-bold ${idx === 0 ? 'text-amber-400' : idx === 1 ? 'text-slate-300' : idx === 2 ? 'text-amber-600' : 'text-slate-500'}">
+              ${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`}
+            </span>
+            <span class="text-white">${item.name} ${String(item.phone) === String(currentUser.phone) ? '(أنت)' : ''}</span>
+          </div>
+          <span class="text-cyan-400 font-bold font-mono">${item.percentage}</span>
+        </div>
+      `).join('');
+    }
+
+    function toggleChatModal() { document.getElementById('chatModal').classList.toggle('hidden'); }
+
+    function handleSendMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      if (!input.value.trim()) return;
+
+      const chatMessages = document.getElementById('chatMessages');
+      const msg = document.createElement('div');
+      msg.className = "bg-cyan-950/60 border border-cyan-800 p-2 rounded-xl text-left";
+      msg.innerHTML = `<span class="font-bold text-slate-300 block text-[10px]">أنت</span>${input.value}`;
+
+      chatMessages.appendChild(msg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      input.value = '';
+    }
+
+    function showScreen(screenId) {
+      ['auth-screen', 'admin-screen', 'dashboard-screen', 'quiz-screen', 'result-screen'].forEach(id => {
+        document.getElementById(id).classList.toggle('hidden', id !== screenId);
+      });
+    }
+  </script>
+</body>
+</html>
