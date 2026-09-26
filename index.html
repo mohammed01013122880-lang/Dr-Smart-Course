@@ -155,37 +155,48 @@
         <span class="bg-cyan-500/10 text-cyan-400 text-xs font-bold px-3 py-1 rounded-full border border-cyan-500/20">System Master Admin</span>
       </div>
 
-      <!-- Admin Navigation -->
+      <!-- Admin Navigation Tabs -->
       <div class="flex bg-slate-800 p-1 rounded-xl text-xs border border-slate-700 overflow-x-auto">
-        <button id="adm-tab-upload" onclick="switchAdminSubTab('upload')" class="flex-1 py-2 px-3 font-bold rounded-lg bg-cyan-600 text-white">إضافة كويز (PDF/نص)</button>
+        <button id="adm-tab-subjects" onclick="switchAdminSubTab('subjects')" class="flex-1 py-2 px-3 font-bold rounded-lg bg-cyan-600 text-white">إدارة المواد</button>
+        <button id="adm-tab-upload" onclick="switchAdminSubTab('upload')" class="flex-1 py-2 px-3 font-bold rounded-lg text-slate-400">إضافة كويز (PDF/نص)</button>
         <button id="adm-tab-stats" onclick="switchAdminSubTab('stats')" class="flex-1 py-2 px-3 font-bold rounded-lg text-slate-400">إحصائيات الكويزات</button>
         <button id="adm-tab-users" onclick="switchAdminSubTab('users')" class="flex-1 py-2 px-3 font-bold rounded-lg text-slate-400">إدارة الطلاب والدردشة</button>
       </div>
 
-      <!-- Admin SubTab 1: Smart Quiz & Question Import -->
-      <div id="adm-sec-upload" class="space-y-4">
+      <!-- SubTab 1: Subject Management (إضافة / تعديل / حذف المواد) -->
+      <div id="adm-sec-subjects" class="space-y-4">
+        <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 space-y-3">
+          <h3 class="text-xs font-bold text-cyan-400">إضافة مادة جديدة للمنصة</h3>
+          <div class="flex gap-2">
+            <input type="text" id="new-subject-name" placeholder="اسم المادة (مثال: Forensic Medicine & Toxicology)" class="flex-grow px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white">
+            <button onclick="addSubjectByAdmin()" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-4 rounded-xl text-xs">إضافة المادة</button>
+          </div>
+        </div>
+
+        <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 space-y-3">
+          <h3 class="text-xs font-bold text-slate-300">المواد المضافة حالياً</h3>
+          <div id="admin-subjects-list" class="space-y-2"></div>
+        </div>
+      </div>
+
+      <!-- SubTab 2: Smart Quiz & Question Import -->
+      <div id="adm-sec-upload" class="hidden space-y-4">
         <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 space-y-3 text-xs">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block font-bold text-slate-300 mb-1">اختر المادة</label>
-              <select id="upload-subject-select" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white">
-                <option value="Anatomy">Anatomy</option>
-                <option value="Physiology">Physiology</option>
-                <option value="Biochemistry">Biochemistry</option>
-                <option value="Histology">Histology</option>
-                <option value="Forensic">Forensic Medicine & Toxicology</option>
-              </select>
+              <select id="upload-subject-select" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white"></select>
             </div>
             <div>
               <label class="block font-bold text-slate-300 mb-1">اسم الكويز / الاختبار</label>
-              <input type="text" id="upload-quiz-title" placeholder="مثال: Lecture 1 Quiz" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white">
+              <input type="text" id="upload-quiz-title" placeholder="مثال: Quiz 1 - General Toxicology" class="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-xl text-white">
             </div>
           </div>
 
           <!-- PDF Upload Box -->
           <div class="p-4 border-2 border-dashed border-slate-700 rounded-2xl text-center bg-slate-900/50 space-y-2">
             <i class="fa-solid fa-file-pdf text-3xl text-rose-500"></i>
-            <p class="font-bold text-slate-300">رفع ملف PDF ليستخرج الأسئلة تلقائياً</p>
+            <p class="font-bold text-slate-300">رفع ملف PDF يستخرج الأسئلة تلقائياً</p>
             <input type="file" id="pdf-file-input" accept="application/pdf" onchange="extractQuestionsFromPDF(event)" class="hidden">
             <button onclick="document.getElementById('pdf-file-input').click()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold rounded-xl border border-slate-700">
               اختر ملف PDF من جهازك
@@ -204,7 +215,7 @@
         </div>
       </div>
 
-      <!-- Admin SubTab 2: Quiz Analytics & Scores -->
+      <!-- SubTab 3: Quiz Analytics & Scores -->
       <div id="adm-sec-stats" class="hidden space-y-4">
         <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 space-y-3">
           <h3 class="text-xs font-bold text-cyan-400">سجل نتائج وحضور الطلاب</h3>
@@ -225,7 +236,7 @@
         </div>
       </div>
 
-      <!-- Admin SubTab 3: Users & Chat Management -->
+      <!-- SubTab 4: Users & Chat Management -->
       <div id="adm-sec-users" class="hidden space-y-4">
         <!-- Promote Admin -->
         <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 space-y-2 text-xs">
@@ -284,7 +295,7 @@
     <!-- 4. LIVE INTERACTIVE QUIZ SCREEN -->
     <div id="quiz-screen" class="space-y-4 hidden">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2 text-xs">
-        <span id="quiz-header-title" class="font-bold text-white">اختبار المحاضرة</span>
+        <span id="quiz-header-title" class="font-bold text-white">اختبار الكويز</span>
         <span class="bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full font-bold border border-cyan-500/20">سؤال <span id="q-num">1</span>/<span id="q-total">10</span></span>
       </div>
 
@@ -379,7 +390,7 @@
     </div>
   </div>
 
-  <!-- CHAT MODAL WITH REALTIME LOCAL PERSISTENCE -->
+  <!-- CHAT MODAL WITH REALTIME PERSISTENCE -->
   <div id="chatModal" class="hidden fixed bottom-4 left-4 z-50 w-[calc(100%-2rem)] sm:w-80 bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 overflow-hidden flex flex-col h-96">
     <div class="bg-slate-900 text-white p-3 flex justify-between items-center border-b border-slate-700">
       <span class="font-bold text-xs"><i class="fa-solid fa-comments text-cyan-400 ml-1"></i> شات دكاترة الدفعة</span>
@@ -409,16 +420,14 @@
 
   <!-- JAVASCRIPT APPLICATION LOGIC -->
   <script>
-    // 5 Default Core Subjects
-    const DEFAULT_SUBJECTS = [
-      { id: "Anatomy", title: "Anatomy" },
-      { id: "Physiology", title: "Physiology" },
-      { id: "Biochemistry", title: "Biochemistry" },
-      { id: "Histology", title: "Histology" },
-      { id: "Forensic", title: "Forensic Medicine & Toxicology" }
-    ];
-
     let appState = {
+      subjects: [
+        { id: "sub_1", title: "Anatomy" },
+        { id: "sub_2", title: "Physiology" },
+        { id: "sub_3", title: "Biochemistry" },
+        { id: "sub_4", title: "Histology" },
+        { id: "sub_5", title: "Forensic Medicine & Toxicology" }
+      ],
       quizzes: [], // [{ id, subjectId, title, questions: [] }]
       users: [],
       chatMessages: [],
@@ -442,11 +451,11 @@
     };
 
     function saveDataToStorage() {
-      localStorage.setItem('dr_smart_db_data', JSON.stringify(appState));
+      localStorage.setItem('dr_smart_db_data_v2', JSON.stringify(appState));
     }
 
     function loadDataFromStorage() {
-      const saved = localStorage.getItem('dr_smart_db_data');
+      const saved = localStorage.getItem('dr_smart_db_data_v2');
       if (saved) {
         try { appState = JSON.parse(saved); } catch(e) {}
       }
@@ -461,6 +470,7 @@
 
         if (currentUser.role === 'admin') {
           showScreen('admin-screen');
+          renderAdminSubjectsList();
           renderAdminUsersTable();
           renderQuizStatsTable();
         } else {
@@ -556,12 +566,17 @@
       switchTab('login');
     }
 
-    // DASHBOARD & QUIZZES
+    // DASHBOARD & SUBJECTS
     function renderStudentDashboard() {
       const grid = document.getElementById('subjects-cards-grid');
       grid.innerHTML = '';
 
-      DEFAULT_SUBJECTS.forEach(sub => {
+      if (appState.subjects.length === 0) {
+        grid.innerHTML = `<p class="col-span-2 text-center text-xs text-slate-500 py-6">لا توجد مواد دراسية مضافة.</p>`;
+        return;
+      }
+
+      appState.subjects.forEach(sub => {
         const count = appState.quizzes.filter(q => q.subjectId === sub.id).length;
         const btn = document.createElement('button');
         btn.onclick = () => openSubjectQuizzes(sub);
@@ -727,19 +742,97 @@
       });
     }
 
-    // ADMIN CONTROLS & PARSER
+    // ADMIN SUBJECT MANAGEMENT
     function switchAdminSubTab(tab) {
-      ['upload', 'stats', 'users'].forEach(t => {
+      ['subjects', 'upload', 'stats', 'users'].forEach(t => {
         document.getElementById(`adm-sec-${t}`).classList.add('hidden');
         document.getElementById(`adm-tab-${t}`).className = "flex-1 py-2 px-3 font-bold rounded-lg text-slate-400";
       });
       document.getElementById(`adm-sec-${tab}`).classList.remove('hidden');
       document.getElementById(`adm-tab-${tab}`).className = "flex-1 py-2 px-3 font-bold rounded-lg bg-cyan-600 text-white";
 
+      if (tab === 'subjects') renderAdminSubjectsList();
+      if (tab === 'upload') updateUploadSubjectDropdown();
       if (tab === 'stats') renderQuizStatsTable();
       if (tab === 'users') renderAdminUsersTable();
     }
 
+    function addSubjectByAdmin() {
+      const name = document.getElementById('new-subject-name').value.trim();
+      if (!name) return;
+
+      appState.subjects.push({
+        id: 'sub_' + Date.now(),
+        title: name
+      });
+      saveDataToStorage();
+      document.getElementById('new-subject-name').value = '';
+      renderAdminSubjectsList();
+      Swal.fire('تمت الإضافة', 'تم إضافة المادة بنجاح', 'success');
+    }
+
+    function editSubject(subId) {
+      const sub = appState.subjects.find(s => s.id === subId);
+      if (!sub) return;
+
+      Swal.fire({
+        title: 'تعديل اسم المادة',
+        input: 'text',
+        inputValue: sub.title,
+        showCancelButton: true,
+        confirmButtonText: 'حفظ',
+        cancelButtonText: 'إلغاء'
+      }).then((result) => {
+        if (result.isConfirmed && result.value.trim()) {
+          sub.title = result.value.trim();
+          saveDataToStorage();
+          renderAdminSubjectsList();
+        }
+      });
+    }
+
+    function deleteSubject(subId) {
+      Swal.fire({
+        title: 'تأكيد الحذف',
+        text: 'هل أنت متأكد من حذف المادة بالكامل وكل كويزاتها؟',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'نعم، احذف',
+        cancelButtonText: 'إلغاء'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          appState.subjects = appState.subjects.filter(s => s.id !== subId);
+          appState.quizzes = appState.quizzes.filter(q => q.subjectId !== subId);
+          saveDataToStorage();
+          renderAdminSubjectsList();
+        }
+      });
+    }
+
+    function renderAdminSubjectsList() {
+      const container = document.getElementById('admin-subjects-list');
+      container.innerHTML = '';
+
+      appState.subjects.forEach(sub => {
+        const div = document.createElement('div');
+        div.className = "p-3 bg-slate-900 border border-slate-700 rounded-xl flex justify-between items-center text-xs";
+        div.innerHTML = `
+          <span class="font-bold text-white">${sub.title}</span>
+          <div class="flex gap-2">
+            <button onclick="editSubject('${sub.id}')" class="px-2.5 py-1 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 rounded-lg">تعديل</button>
+            <button onclick="deleteSubject('${sub.id}')" class="px-2.5 py-1 bg-rose-600/20 text-rose-400 border border-rose-500/30 rounded-lg">حذف</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function updateUploadSubjectDropdown() {
+      const sel = document.getElementById('upload-subject-select');
+      sel.innerHTML = appState.subjects.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
+    }
+
+    // PDF EXTRACTOR & PARSER
     async function extractQuestionsFromPDF(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -823,7 +916,7 @@
         <tr>
           <td class="p-2.5 font-bold text-white">${r.studentName}</td>
           <td class="p-2.5 font-mono text-slate-400">${r.phone}</td>
-          <td class="p-2.5 text-slate-300">${r.subjectId} - ${r.quizTitle}</td>
+          <td class="p-2.5 text-slate-300">${r.quizTitle}</td>
           <td class="p-2.5 font-bold text-cyan-400">${r.score}/${r.total}</td>
           <td class="p-2.5 font-bold text-emerald-400 font-mono">${r.percentage}%</td>
         </tr>
@@ -874,7 +967,7 @@
       renderChat();
     }
 
-    // PROFILE MODAL & PROFILE EDITING
+    // PROFILE MODAL & EDITING
     function openProfileModal() {
       if (!currentUser) return;
       document.getElementById('prof-avatar').innerText = currentUser.name.charAt(0);
@@ -901,7 +994,6 @@
       currentUser.year = document.getElementById('prof-input-year').value.trim();
       currentUser.address = document.getElementById('prof-input-address').value.trim();
 
-      // Update in user list
       const idx = appState.users.findIndex(u => u.phone === currentUser.phone);
       if (idx !== -1) appState.users[idx] = currentUser;
 
@@ -913,7 +1005,7 @@
       Swal.fire('تم الحفظ', 'تم تحديث بياناتك الشخصية بنجاح!', 'success');
     }
 
-    // REALTIME CHAT ENGINE
+    // CHAT SYSTEM
     function toggleChatModal() {
       document.getElementById('chatModal').classList.toggle('hidden');
     }
