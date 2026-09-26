@@ -478,6 +478,7 @@
         const res = await fetch(GOOGLE_SCRIPT_URL);
         const data = await res.json();
         if (data && data.subjects) {
+          // دمج ذكي أو تحديث للحفاظ على سلسة البيانات
           appState = data;
           if (currentUser) {
             const freshMe = appState.users.find(u => u.phone === currentUser.phone);
@@ -988,11 +989,30 @@
       Swal.fire({
         title: `تفعيل مواد الطالب: ${student.name}`,
         html: `<div class="space-y-2 text-right max-h-64 overflow-y-auto pr-1">${checkboxesHtml}</div>`,
-        showCancelButton: true, confirmButtonText: 'حفظ الصلاحيات', cancelButtonText: 'إلغاء',
+        showCancelButton: true, 
+        confirmButtonText: 'حفظ الصلاحيات', 
+        cancelButtonText: 'إلغاء',
         preConfirm: async () => {
-          student.allowedSubjects = Array.from(document.querySelectorAll('.student-sub-chk:checked')).map(el => el.value);
-          await saveDataToServer();
+          // تحديث فوري محلياً (Optimistic Update)
+          const newAllowed = Array.from(document.querySelectorAll('.student-sub-chk:checked')).map(el => el.value);
+          student.allowedSubjects = newAllowed;
+          
+          // تحديث الجدول فوراً لكي لا يشعر الأدمن بأي تأخير
           renderAdminUsersTable();
+
+          // إظهار مؤشر التحميل الصغير أو الحفظ في الخلفية
+          Swal.showLoading();
+          await saveDataToServer();
+          return true;
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'تم الحفظ بنجاح',
+            icon: 'success',
+            timer: 1200,
+            showConfirmButton: false
+          });
         }
       });
     }
