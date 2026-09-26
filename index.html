@@ -1057,3 +1057,26 @@
   </script>
 </body>
 </html>
+<!-- قسم عرض النتيجة (يظهر بعد انتهاء الكويز) -->
+<div id="resultSection" style="display: none; text-align: center; padding: 30px;">
+  <h2 style="color: #2c3e50;">نتيجة الاختبار</h2>
+  <div id="scoreDisplay" style="font-size: 28px; font-weight: bold; color: #27ae60; margin: 20px 0;">
+    <!-- سيتم وضع الدرجة هنا تلقائياً مثل: 8 من 10 -->
+  </div>
+  
+  <!-- زر مراجعة الإجابات -->
+  <button id="reviewBtn" onclick="showReview()" style="background-color: #3498db; color: white; padding: 12px 25px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 10px;">
+    مراجعة الإجابات
+  </button>
+</div>
+
+<!-- قسم مراجعة الإجابات (مخفي افتراضياً ويظهر عند الضغط على زر المراجعة) -->
+<div id="reviewSection" style="display: none; padding: 20px; text-align: right; direction: rtl;">
+  <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">مراجعة الإجابات</h3>
+  <div id="reviewContainer">
+    <!-- سيتم تعبئة تفاصيل الأسئلة والإجابات هنا برمجياً -->
+  </div>
+  <button onclick="backToResult()" style="background-color: #95a5a6; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; margin-top: 20px;">
+    العودة للنتيجة
+  </button>
+</div>
