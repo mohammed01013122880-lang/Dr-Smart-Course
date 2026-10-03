@@ -478,7 +478,6 @@
         const res = await fetch(GOOGLE_SCRIPT_URL);
         const data = await res.json();
         if (data && data.subjects) {
-          // دمج ذكي أو تحديث للحفاظ على سلسة البيانات
           appState = data;
           if (currentUser) {
             const freshMe = appState.users.find(u => u.phone === currentUser.phone);
@@ -562,283 +561,85 @@
     function switchTab(tab) {
       document.getElementById('login-form').classList.toggle('hidden', tab !== 'login');
       document.getElementById('signup-form').classList.toggle('hidden', tab !== 'signup');
-      document.getElementById('tab-login-btn').className = tab === 'login' ? 'flex-1 py-2.5 text-xs font-bold rounded-xl bg-cyan-600 text-white shadow-lg shadow-cyan-600/30' : 'flex-1 py-2.5 text-xs font-bold rounded-xl text-slate-400';
-      document.getElementById('tab-signup-btn').className = tab === 'signup' ? 'flex-1 py-2.5 text-xs font-bold rounded-xl bg-emerald-600 text-white shadow-lg shadow-emerald-600/30' : 'flex-1 py-2.5 text-xs font-bold rounded-xl text-slate-400';
+
+      const loginBtn = document.getElementById('tab-login-btn');
+      const signupBtn = document.getElementById('tab-signup-btn');
+
+      if (tab === 'login') {
+        loginBtn.className = "flex-1 py-2.5 text-xs font-bold rounded-xl bg-cyan-600 text-white shadow-lg shadow-cyan-600/30 transition";
+        signupBtn.className = "flex-1 py-2.5 text-xs font-bold rounded-xl text-slate-400 hover:text-white transition";
+      } else {
+        signupBtn.className = "flex-1 py-2.5 text-xs font-bold rounded-xl bg-cyan-600 text-white shadow-lg shadow-cyan-600/30 transition";
+        loginBtn.className = "flex-1 py-2.5 text-xs font-bold rounded-xl text-slate-400 hover:text-white transition";
+      }
     }
 
+    function showScreen(screenId) {
+      ['auth-screen', 'admin-screen', 'dashboard-screen', 'quiz-screen', 'result-screen'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(screenId).classList.remove('hidden');
+    }
+
+    // AUTHENTICATION LOGIC
     function handleLogin(e) {
       e.preventDefault();
       const phone = document.getElementById('login-phone').value.trim();
-      const pass = document.getElementById('login-password').value.trim();
+      const password = document.getElementById('login-password').value.trim();
       const remember = document.getElementById('remember-me').checked;
 
-      if (phone === "01055751713" && pass === "mo113113113") {
-        currentUser = { name: "System Admin", phone: phone, uni: "جامعة الأزهر", college: "طب بنين", year: "الفرقة الرابعة", address: "القاهرة", role: "admin", allowedSubjects: [] };
+      // Admin Account
+      if (phone === '01000000000' && password === 'admin') {
+        currentUser = { name: "المدير العام", phone, role: "admin", allowedSubjects: ["*"] };
         const storage = remember ? localStorage : sessionStorage;
         storage.setItem('dr_smart_current_user', JSON.stringify(currentUser));
         checkAuthSession();
         return;
       }
 
-      const user = appState.users.find(u => u.phone === phone && u.password === pass);
+      const user = appState.users.find(u => u.phone === phone && u.password === password);
       if (user) {
-        if (!user.activeSessions) user.activeSessions = [];
-        let deviceId = localStorage.getItem('dr_smart_device_id');
-        if (!deviceId) {
-          deviceId = 'dev_' + Date.now() + Math.random();
-          localStorage.setItem('dr_smart_device_id', deviceId);
-        }
-
-        if (!user.activeSessions.includes(deviceId) && user.activeSessions.length >= 2) {
-          Swal.fire('عذراً', 'تم الوصول للحد الأقصى من الأجهزة (جهازين فقط مسموح بهما لهذا الحساب).', 'error');
-          return;
-        }
-
-        if (!user.activeSessions.includes(deviceId)) {
-          user.activeSessions.push(deviceId);
-          saveDataToServer();
-        }
-
         currentUser = user;
         const storage = remember ? localStorage : sessionStorage;
         storage.setItem('dr_smart_current_user', JSON.stringify(currentUser));
         checkAuthSession();
+        Swal.fire({ icon: 'success', title: 'أهلاً بك بك دكتور!', timer: 1500, showConfirmButton: false });
       } else {
-        Swal.fire('خطأ الدخول', 'رقم الموبايل أو كلمة المرور غير صحيحة.', 'error');
+        Swal.fire({ icon: 'error', title: 'خطأ', text: 'رقم الموبايل أو كلمة المرور غير صحيحة' });
       }
     }
 
-    async function handleSignup(e) {
+    function handleSignup(e) {
       e.preventDefault();
+      const name = document.getElementById('signup-name').value.trim();
       const phone = document.getElementById('signup-phone').value.trim();
+      const password = document.getElementById('signup-password').value.trim();
+      const uni = document.getElementById('signup-uni').value.trim();
+      const college = document.getElementById('signup-college').value.trim();
+      const year = document.getElementById('signup-year').value.trim();
+      const address = document.getElementById('signup-address').value.trim();
 
       if (appState.users.some(u => u.phone === phone)) {
-        Swal.fire('تنبيه', 'رقم الموبايل مسجل بالفعل.', 'warning');
+        Swal.fire({ icon: 'warning', title: 'تنبيه', text: 'رقم الموبايل مسجل بالفعل!' });
         return;
       }
 
       const newUser = {
-        name: document.getElementById('signup-name').value.trim(),
-        phone: phone,
-        password: document.getElementById('signup-password').value.trim(),
-        uni: document.getElementById('signup-uni').value.trim(),
-        college: document.getElementById('signup-college').value.trim(),
-        year: document.getElementById('signup-year').value.trim(),
-        address: document.getElementById('signup-address').value.trim(),
+        name, phone, password, uni, college, year, address,
         role: "student",
-        allowedSubjects: [],
-        activeSessions: []
+        allowedSubjects: []
       };
 
       appState.users.push(newUser);
-      await saveDataToServer();
+      saveDataToServer();
 
-      Swal.fire('تم بنجاح', 'تم إنشاء الحساب بنجاح، بانتظار تفعيل الأدمن لحسابك والمواد!', 'success');
-      switchTab('login');
+      currentUser = newUser;
+      localStorage.setItem('dr_smart_current_user', JSON.stringify(currentUser));
+      checkAuthSession();
+      Swal.fire({ icon: 'success', title: 'تم إنشاء الحساب بنجاح!', timer: 1800, showConfirmButton: false });
     }
 
-    function renderStudentDashboard() {
-      const grid = document.getElementById('subjects-cards-grid');
-      grid.innerHTML = '';
-
-      if (!currentUser.allowedSubjects || currentUser.allowedSubjects.length === 0) {
-        grid.innerHTML = `
-          <div class="col-span-2 text-center p-10 bg-dark-800/80 border border-slate-800 rounded-3xl space-y-3 shadow-xl">
-            <i class="fa-solid fa-lock text-4xl text-amber-400 animate-pulse"></i>
-            <h4 class="font-bold text-white text-sm">حسابك في انتظار تفعيل المواد من الأدمن</h4>
-            <p class="text-xs text-slate-400">تواصل مع الدعم الفني الآن عبر زر الدعم بالأعلى لفتح وتفعيل صلاحيات المواد.</p>
-          </div>`;
-        return;
-      }
-
-      const allowedSubs = appState.subjects.filter(sub => currentUser.allowedSubjects.includes(sub.id));
-      allowedSubs.forEach(sub => {
-        const btn = document.createElement('button');
-        btn.onclick = () => openSubjectQuizzes(sub);
-        btn.className = "p-5 bg-dark-800 hover:bg-dark-700/80 border border-slate-800 rounded-2xl flex items-center justify-between text-xs font-bold transition shadow-xl group";
-        btn.innerHTML = `<span class="flex items-center gap-3 text-white text-sm"><i class="fa-solid fa-book-medical text-cyan-400 text-base"></i> ${sub.title}</span><span class="text-cyan-400 group-hover:translate-x-1 transition">عرض الكويزات ➔</span>`;
-        grid.appendChild(btn);
-      });
-    }
-
-    function updateStudentProgress() {
-      if (!currentUser || currentUser.role === 'admin' || !currentUser.allowedSubjects) return;
-      const allowedQuizzes = appState.quizzes.filter(q => currentUser.allowedSubjects.includes(q.subjectId));
-      const totalQuizzes = allowedQuizzes.length;
-      const myCompleted = new Set(appState.results.filter(r => r.phone === currentUser.phone).map(r => r.quizId)).size;
-      const pct = totalQuizzes > 0 ? Math.round((myCompleted / totalQuizzes) * 100) : 0;
-      document.getElementById('progress-text').innerText = `${pct}% (${myCompleted}/${totalQuizzes})`;
-      document.getElementById('overall-progress-bar').style.width = `${pct}%`;
-    }
-
-    function openSubjectQuizzes(sub) {
-      currentSubjectId = sub.id;
-      document.getElementById('subjects-container-view').classList.add('hidden');
-      document.getElementById('quizzes-container-view').classList.remove('hidden');
-      document.getElementById('selected-subject-title').innerText = `${sub.title} - الكويزات المتاحة`;
-
-      const grid = document.getElementById('quizzes-list-grid');
-      grid.innerHTML = '';
-
-      const quizzes = appState.quizzes.filter(q => q.subjectId === sub.id);
-      if (quizzes.length === 0) {
-        grid.innerHTML = `<p class="text-center text-xs text-slate-500 py-8">لا توجد كويزات مضافة لهذه المادة حالياً.</p>`;
-        return;
-      }
-
-      quizzes.forEach(q => {
-        const isDone = appState.results.some(r => r.phone === currentUser.phone && r.quizId === q.id);
-        const div = document.createElement('div');
-        div.className = "p-4 bg-dark-800 border border-slate-800 rounded-2xl flex items-center justify-between text-xs font-semibold shadow-lg";
-        div.innerHTML = `<div><span class="block text-white font-bold text-sm">${q.title}</span><span class="text-[11px] text-slate-400">${q.questions ? q.questions.length : 0} سؤال ${isDone ? '• (تم الإنجاز ✓)' : ''}</span></div><button onclick="startQuiz('${q.id}')" class="px-4 py-2 ${isDone ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-cyan-600 hover:bg-cyan-500'} text-white font-bold rounded-xl text-xs transition shadow-md">${isDone ? 'إعادة الكويز' : 'ابدأ الكويز ➔'}</button>`;
-        grid.appendChild(div);
-      });
-    }
-
-    function backToSubjectsView() {
-      document.getElementById('subjects-container-view').classList.remove('hidden');
-      document.getElementById('quizzes-container-view').classList.add('hidden');
-      updateStudentProgress();
-    }
-
-    function startQuiz(quizId) {
-      const qz = appState.quizzes.find(q => q.id === quizId);
-      if (!qz || !qz.questions || qz.questions.length === 0) return;
-      currentQuiz = qz;
-      activeQuestions = qz.questions;
-      currentQIdx = 0;
-      currentScore = 0;
-      studentAnswersHistory = [];
-      showScreen('quiz-screen');
-      document.getElementById('quiz-header-title').innerText = qz.title;
-      document.getElementById('q-total').innerText = activeQuestions.length;
-      renderCurrentQuestion();
-    }
-
-    function renderCurrentQuestion() {
-      selectedOptIdx = null;
-      const q = activeQuestions[currentQIdx];
-      document.getElementById('q-num').innerText = currentQIdx + 1;
-      document.getElementById('question-text').innerText = `${currentQIdx + 1}. ${q.question}`;
-      document.getElementById('progress-bar').style.width = `${((currentQIdx + 1) / activeQuestions.length) * 100}%`;
-
-      const container = document.getElementById('options-container');
-      container.innerHTML = q.options.map((opt, idx) => `
-        <div onclick="selectQuizOption(${idx})" id="opt-${idx}" class="p-4 bg-dark-800 border border-slate-800 rounded-2xl cursor-pointer flex items-center transition hover:border-cyan-500 shadow-md">
-          <div class="w-7 h-7 rounded-xl border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-400 ml-3.5 bg-dark-900">${String.fromCharCode(65 + idx)}</div>
-          <span class="text-xs sm:text-sm font-medium text-slate-200">${opt}</span>
-        </div>
-      `).join('');
-    }
-
-    function selectQuizOption(idx) {
-      selectedOptIdx = idx;
-      document.querySelectorAll('#options-container > div').forEach((el, i) => {
-        el.className = i === idx ? "p-4 bg-cyan-950/70 border-2 border-cyan-500 rounded-2xl cursor-pointer flex items-center transition shadow-lg shadow-cyan-500/10" : "p-4 bg-dark-800 border border-slate-800 rounded-2xl cursor-pointer flex items-center transition shadow-md";
-      });
-    }
-
-    function nextQuestion() {
-      if (selectedOptIdx === null) {
-        Swal.fire('تنبيه', 'يرجى اختيار إجابة أولاً!', 'warning');
-        return;
-      }
-      const q = activeQuestions[currentQIdx];
-      const isCorrect = selectedOptIdx === q.correct;
-      if (isCorrect) currentScore++;
-
-      studentAnswersHistory.push({
-        questionIndex: currentQIdx,
-        question: q.question,
-        options: q.options,
-        correctOption: q.correct,
-        selectedOption: selectedOptIdx,
-        isCorrect: isCorrect
-      });
-
-      currentQIdx++;
-      if (currentQIdx < activeQuestions.length) renderCurrentQuestion();
-      else finishQuiz();
-    }
-
-    async function finishQuiz() {
-      showScreen('result-screen');
-      const pct = Math.round((currentScore / activeQuestions.length) * 100);
-      document.getElementById('final-score').innerText = `${pct}%`;
-
-      appState.results.push({
-        studentName: currentUser.name,
-        phone: currentUser.phone,
-        subjectId: currentQuiz.subjectId,
-        quizId: currentQuiz.id,
-        quizTitle: currentQuiz.title,
-        score: currentScore,
-        total: activeQuestions.length,
-        percentage: pct
-      });
-      await saveDataToServer();
-      changeLeaderboardScope('quiz');
-    }
-
-    function openReviewModal() {
-      const container = document.getElementById('review-questions-container');
-      container.innerHTML = studentAnswersHistory.map((item, idx) => `
-        <div class="p-4 rounded-2xl border ${item.isCorrect ? 'bg-emerald-950/30 border-emerald-500/40' : 'bg-rose-950/30 border-rose-500/40'} space-y-2.5">
-          <div class="flex items-center justify-between">
-            <span class="font-bold text-white text-xs">سؤال ${idx + 1}: ${item.question}</span>
-            <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold ${item.isCorrect ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}">
-              ${item.isCorrect ? 'إجابة صحيحة ✓' : 'إجابة خاطئة ✗'}
-            </span>
-          </div>
-          <div class="space-y-1.5 pt-1">
-            ${item.options.map((opt, optIdx) => {
-              let style = "bg-dark-900 border-slate-800 text-slate-300";
-              let badge = String.fromCharCode(65 + optIdx);
-              if (optIdx === item.correctOption) {
-                style = "bg-emerald-900/40 border-emerald-500 text-emerald-200 font-bold";
-                badge += " (الصحيحة)";
-              } else if (optIdx === item.selectedOption && !item.isCorrect) {
-                style = "bg-rose-900/40 border-rose-500 text-rose-200 font-bold";
-                badge += " (إجابتك)";
-              }
-              return `<div class="p-2.5 rounded-xl border ${style} flex items-center gap-2.5">
-                <span class="w-6 h-6 rounded-lg bg-dark-800 flex items-center justify-center text-[10px]">${badge}</span>
-                <span class="text-xs">${opt}</span>
-              </div>`;
-            }).join('')}
-          </div>
-        </div>
-      `).join('');
-      document.getElementById('reviewModal').classList.remove('hidden');
-    }
-
-    function closeReviewModal() {
-      document.getElementById('reviewModal').classList.add('hidden');
-    }
-
-    function changeLeaderboardScope(scope) {
-      ['quiz', 'subject', 'global'].forEach(s => {
-        document.getElementById(`scope-btn-${s}`).className = s === scope ? "px-3.5 py-1.5 rounded-lg bg-cyan-600 text-white font-bold shadow-md" : "px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition";
-      });
-      let filtered = [...appState.results];
-      if (scope === 'quiz') filtered = filtered.filter(r => r.quizId === currentQuiz.id);
-      else if (scope === 'subject') filtered = filtered.filter(r => r.subjectId === currentQuiz.subjectId);
-      filtered.sort((a, b) => b.percentage - a.percentage);
-
-      const container = document.getElementById('leaderboard-list-container');
-      container.innerHTML = filtered.length === 0 ? `<p class="text-center text-slate-500 py-6">لا توجد نتائج مسجلة حتى الآن.</p>` : filtered.map((item, idx) => `
-        <div class="flex items-center justify-between p-3.5 rounded-2xl ${item.phone === currentUser.phone ? 'bg-gradient-to-r from-cyan-950/80 to-dark-900 border border-cyan-500 font-bold shadow-lg' : 'bg-dark-900/80 border border-slate-800/80'}">
-          <div class="flex items-center gap-3">
-            <span class="w-8 h-8 rounded-xl flex items-center justify-center font-black ${idx === 0 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : idx === 1 ? 'bg-slate-300/20 text-slate-200 border border-slate-300/30' : idx === 2 ? 'bg-amber-700/20 text-amber-600 border border-amber-700/30' : 'bg-dark-800 text-slate-400'}">
-              ${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`}
-            </span>
-            <span class="text-white text-sm">${item.studentName} ${item.phone === currentUser.phone ? '<span class="text-cyan-400 font-normal">(أنت)</span>' : ''}</span>
-          </div>
-          <span class="text-cyan-400 font-black font-mono text-sm px-3 py-1 bg-dark-800 rounded-xl border border-slate-800">${item.percentage}%</span>
-        </div>
-      `).join('');
-    }
-
+    // ADMIN CONTROL PANEL LOGIC
     function switchAdminSubTab(tab) {
       ['subjects', 'upload', 'stats', 'users'].forEach(t => {
         document.getElementById(`adm-sec-${t}`).classList.add('hidden');
@@ -847,298 +648,587 @@
       document.getElementById(`adm-sec-${tab}`).classList.remove('hidden');
       document.getElementById(`adm-tab-${tab}`).className = "flex-1 py-2.5 px-3 font-bold rounded-xl bg-cyan-600 text-white shadow-md";
 
-      if (tab === 'subjects') renderAdminSubjectsList();
-      if (tab === 'upload') updateUploadSubjectDropdown();
-      if (tab === 'stats') renderQuizStatsTable();
-      if (tab === 'users') renderAdminUsersTable();
+      if (tab === 'upload') updateSubjectDropdown();
     }
 
-    async function addSubjectByAdmin() {
-      const name = document.getElementById('new-subject-name').value.trim();
-      if (!name) return;
-      appState.subjects.push({ id: 'sub_' + Date.now(), title: name });
-      await saveDataToServer();
-      document.getElementById('new-subject-name').value = '';
+    function addSubjectByAdmin() {
+      const nameInput = document.getElementById('new-subject-name');
+      const title = nameInput.value.trim();
+      if (!title) return;
+
+      const newSub = { id: 'sub_' + Date.now(), title };
+      appState.subjects.push(newSub);
+      saveDataToServer();
+      nameInput.value = '';
       renderAdminSubjectsList();
-      Swal.fire('تمت الإضافة', 'تم إضافة المادة بنجاح', 'success');
-    }
-
-    function editSubject(subId) {
-      const sub = appState.subjects.find(s => s.id === subId);
-      if (!sub) return;
-      Swal.fire({
-        title: 'تعديل اسم المادة', input: 'text', inputValue: sub.title, showCancelButton: true, confirmButtonText: 'حفظ'
-      }).then(async (result) => {
-        if (result.isConfirmed && result.value.trim()) {
-          sub.title = result.value.trim();
-          await saveDataToServer();
-          renderAdminSubjectsList();
-        }
-      });
-    }
-
-    function deleteSubject(subId) {
-      Swal.fire({ title: 'تأكيد الحذف', icon: 'warning', showCancelButton: true }).then(async (result) => {
-        if (result.isConfirmed) {
-          appState.subjects = appState.subjects.filter(s => s.id !== subId);
-          appState.quizzes = appState.quizzes.filter(q => q.subjectId !== subId);
-          await saveDataToServer();
-          renderAdminSubjectsList();
-        }
-      });
+      Swal.fire({ icon: 'success', title: 'تم إضافة المادة بنجاح', timer: 1200, showConfirmButton: false });
     }
 
     function renderAdminSubjectsList() {
-      const container = document.getElementById('admin-subjects-list');
-      container.innerHTML = appState.subjects.map(sub => `
-        <div class="p-3.5 bg-dark-900 border border-slate-800 rounded-2xl flex justify-between items-center text-xs">
-          <span class="font-bold text-white text-sm">${sub.title}</span>
-          <div class="flex gap-2">
-            <button onclick="editSubject('${sub.id}')" class="px-3 py-1.5 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 rounded-xl font-bold">تعديل</button>
-            <button onclick="deleteSubject('${sub.id}')" class="px-3 py-1.5 bg-rose-600/20 text-rose-400 border border-rose-500/30 rounded-xl font-bold">حذف</button>
-          </div>
+      const list = document.getElementById('admin-subjects-list');
+      if (!list) return;
+      list.innerHTML = appState.subjects.map(sub => `
+        <div class="flex items-center justify-between p-3 bg-dark-900 border border-slate-800 rounded-xl">
+          <span class="font-bold text-white">${sub.title}</span>
+          <button onclick="deleteSubject('${sub.id}')" class="text-rose-400 hover:text-rose-300 px-3 py-1 bg-rose-500/10 rounded-lg text-xs transition">حذف</button>
         </div>
       `).join('');
     }
 
-    function updateUploadSubjectDropdown() {
-      const sel = document.getElementById('upload-subject-select');
-      sel.innerHTML = appState.subjects.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
+    function deleteSubject(subId) {
+      Swal.fire({
+        title: 'تأكيد الحذف',
+        text: 'هل انت متأكد من حذف هذه المادة وجميع الكويزات التابعة لها؟',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'نعم، احذف',
+        cancelButtonText: 'إلغاء'
+      }).then(r => {
+        if (r.isConfirmed) {
+          appState.subjects = appState.subjects.filter(s => s.id !== subId);
+          appState.quizzes = appState.quizzes.filter(q => q.subjectId !== subId);
+          saveDataToServer();
+          renderAdminSubjectsList();
+        }
+      });
+    }
+
+    function updateSubjectDropdown() {
+      const select = document.getElementById('upload-subject-select');
+      if (!select) return;
+      select.innerHTML = appState.subjects.map(s => `<option value="${s.id}">${s.title}</option>`).join('');
     }
 
     async function extractQuestionsFromPDF(event) {
       const file = event.target.files[0];
       if (!file) return;
-      const fileReader = new FileReader();
-      fileReader.onload = async function() {
-        const typedarray = new Uint8Array(this.result);
-        const pdf = await pdfjsLib.getDocument(typedarray).promise;
-        let fullText = '';
+
+      Swal.fire({ title: 'جاري قراءة واستخراج الأسئلة...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let fullText = "";
+
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
-          const textContent = await page.getTextContent();
-          fullText += textContent.items.map(item => item.str).join(' ') + '\n\n';
+          const content = await page.getTextContent();
+          const pageText = content.items.map(item => item.str).join(" ");
+          fullText += pageText + "\n";
         }
+
         document.getElementById('bulk-text-input').value = fullText;
-        Swal.fire('تم الاستخراج', 'تم استخراج النص من PDF بنجاح.', 'success');
-      };
-      fileReader.readAsArrayBuffer(file);
+        Swal.fire({ icon: 'success', title: 'تم استخراج النص من PDF!', timer: 1500, showConfirmButton: false });
+      } catch(err) {
+        Swal.fire({ icon: 'error', title: 'خطأ', text: 'فشل في استخراج النصوص من ملف PDF' });
+      }
     }
 
-    async function processAndSaveQuiz() {
+    function processAndSaveQuiz() {
       const subjectId = document.getElementById('upload-subject-select').value;
-      const quizTitle = document.getElementById('upload-quiz-title').value.trim();
-      const rawText = document.getElementById('bulk-text-input').value.trim();
-      if (!subjectId || !quizTitle || !rawText) return;
+      const title = document.getElementById('upload-quiz-title').value.trim();
+      const bulkText = document.getElementById('bulk-text-input').value.trim();
 
-      const blocks = rawText.split(/\n\s*\n/);
-      let parsedQ = [];
-      blocks.forEach(b => {
-        const lines = b.split('\n').map(l => l.trim()).filter(Boolean);
-        if (lines.length >= 5) {
-          parsedQ.push({
-            question: lines[0].replace(/^Q?\d*[\.\:-]?\s*/i, ''),
-            options: [lines[1], lines[2], lines[3], lines[4]].map(o => o.replace(/^[A-D1-4][\)\.-]\s*/i, '')),
-            correct: lines[lines.length - 1].toUpperCase().includes("B") ? 1 : lines[lines.length - 1].toUpperCase().includes("C") ? 2 : lines[lines.length - 1].toUpperCase().includes("D") ? 3 : 0
+      if (!subjectId || !title || !bulkText) {
+        Swal.fire({ icon: 'warning', title: 'تنبيه', text: 'يرجى اختيار المادة وإدخال عنوان الكويز والأسئلة' });
+        return;
+      }
+
+      const questions = parseBulkQuestionsText(bulkText);
+      if (questions.length === 0) {
+        Swal.fire({ icon: 'error', title: 'خطأ في التنسيق', text: 'لم يتم العثور على أسئلة بالتنسيق المطلوب' });
+        return;
+      }
+
+      const newQuiz = {
+        id: 'quiz_' + Date.now(),
+        subjectId,
+        title,
+        questions
+      };
+
+      appState.quizzes.push(newQuiz);
+      saveDataToServer();
+
+      document.getElementById('upload-quiz-title').value = '';
+      document.getElementById('bulk-text-input').value = '';
+      Swal.fire({ icon: 'success', title: `تم نشر الكويز بـ (${questions.length}) سؤال بنجاح!` });
+    }
+
+    function parseBulkQuestionsText(text) {
+      const questions = [];
+      const blocks = text.split(/(?=Q\d+:?|Question\d+:?|s*\d+[\.\)])/i).filter(b => b.trim());
+
+      blocks.forEach(block => {
+        const lines = block.split('\n').map(l => l.trim()).filter(l => l);
+        if (lines.length < 3) return;
+
+        let qText = lines[0].replace(/^(Q\d+:?|Question\d+:?|\d+[\.\)])\s*/i, '');
+        let options = [];
+        let answerIdx = 0;
+
+        lines.slice(1).forEach(line => {
+          const optMatch = line.match(/^([A-D])[\.\)]\s*(.*)/i);
+          const ansMatch = line.match(/^(Answer|Ans|الإجابة):?\s*([A-D])/i);
+
+          if (optMatch) {
+            options.push(optMatch[2].trim());
+          } else if (ansMatch) {
+            const char = ansMatch[2].toUpperCase();
+            answerIdx = ['A', 'B', 'C', 'D'].indexOf(char);
+          }
+        });
+
+        if (options.length >= 2) {
+          questions.push({
+            question: qText,
+            options: options,
+            answer: answerIdx >= 0 ? answerIdx : 0
           });
         }
       });
 
-      if (parsedQ.length === 0) return Swal.fire('خطأ', 'تنسيق الأسئلة غير صحيح', 'error');
-
-      appState.quizzes.push({ id: 'quiz_' + Date.now(), subjectId: subjectId, title: quizTitle, questions: parsedQ });
-      await saveDataToServer();
-      document.getElementById('upload-quiz-title').value = '';
-      document.getElementById('bulk-text-input').value = '';
-      Swal.fire('تم النشر', 'تم نشر الكويز بنجاح!', 'success');
-    }
-
-    function renderQuizStatsTable() {
-      const tbody = document.getElementById('quiz-stats-table-body');
-      tbody.innerHTML = appState.results.map(r => `<tr><td class="p-3 font-bold text-white">${r.studentName}</td><td class="p-3 text-slate-400 font-mono">${r.phone}</td><td class="p-3 text-slate-300">${r.quizTitle}</td><td class="p-3 font-bold text-cyan-400">${r.score}/${r.total}</td><td class="p-3 font-bold text-emerald-400">${r.percentage}%</td></tr>`).join('');
+      return questions;
     }
 
     function renderAdminUsersTable() {
       const tbody = document.getElementById('admin-users-list');
       if (!tbody) return;
-      const students = appState.users.filter(u => u.role !== 'admin');
-      tbody.innerHTML = students.length === 0 ? `<tr><td colspan="4" class="p-5 text-center text-slate-500">لا توجد حسابات طلاب مسجلة حتى الآن.</td></tr>` : students.map(u => `
-        <tr>
-          <td class="p-3.5 font-bold text-white">${u.name}</td>
-          <td class="p-3.5 font-mono text-slate-400">${u.phone}</td>
-          <td class="p-3.5 text-slate-300">${u.college} / ${u.uni}</td>
-          <td class="p-3.5 text-center">
-            <button onclick="openStudentPermissionsModal('${u.phone}')" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl shadow-md transition">إدارة وتفعيل المواد (${u.allowedSubjects ? u.allowedSubjects.length : 0})</button>
-          </td>
+
+      tbody.innerHTML = appState.users.map(u => {
+        if (u.role === 'admin') return '';
+        return `
+          <tr class="hover:bg-dark-800/60 transition">
+            <td class="p-3.5 font-bold text-white">${u.name}</td>
+            <td class="p-3.5 text-slate-300 font-mono">${u.phone}</td>
+            <td class="p-3.5 text-slate-400">${u.college || ''} - ${u.uni || ''}</td>
+            <td class="p-3.5 text-center">
+              <button onclick="openUserAccessModal('${u.phone}')" class="px-3.5 py-1.5 bg-cyan-600/20 text-cyan-400 border border-cyan-500/30 rounded-xl hover:bg-cyan-600 hover:text-white transition font-bold text-xs">
+                إدارة الصلاحيات والمواد 🔑
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openUserAccessModal(phone) {
+      const user = appState.users.find(u => u.phone === phone);
+      if (!user) return;
+
+      const checkboxHtml = appState.subjects.map(s => {
+        const isChecked = user.allowedSubjects && (user.allowedSubjects.includes('*') || user.allowedSubjects.includes(s.id));
+        return `
+          <label class="flex items-center gap-2.5 p-3 bg-dark-900 border border-slate-800 rounded-xl cursor-pointer">
+            <input type="checkbox" value="${s.id}" ${isChecked ? 'checked' : ''} class="user-sub-chk w-4 h-4 text-cyan-600 rounded bg-dark-800 border-slate-700">
+            <span class="text-xs font-bold text-white">${s.title}</span>
+          </label>
+        `;
+      }).join('');
+
+      Swal.fire({
+        title: `تفعيل المواد للطالب: ${user.name}`,
+        html: `<div class="space-y-2 text-right max-h-60 overflow-y-auto pt-2">${checkboxHtml}</div>`,
+        showCancelButton: true,
+        confirmButtonText: 'حفظ التفعيل',
+        cancelButtonText: 'إلغاء'
+      }).then(res => {
+        if (res.isConfirmed) {
+          const checked = Array.from(document.querySelectorAll('.user-sub-chk:checked')).map(c => c.value);
+          user.allowedSubjects = checked;
+          saveDataToServer();
+          renderAdminUsersTable();
+          Swal.fire({ icon: 'success', title: 'تم تحديث صلاحيات الطالب بنجاح', timer: 1200, showConfirmButton: false });
+        }
+      });
+    }
+
+    function renderQuizStatsTable() {
+      const tbody = document.getElementById('quiz-stats-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = appState.results.map(r => `
+        <tr class="hover:bg-dark-800/60 transition">
+          <td class="p-3 font-bold text-white">${r.userName}</td>
+          <td class="p-3 text-slate-400 font-mono">${r.userPhone}</td>
+          <td class="p-3 text-cyan-400 font-bold">${r.quizTitle}</td>
+          <td class="p-3 text-amber-400 font-bold">${r.score} / ${r.total}</td>
+          <td class="p-3 font-bold ${r.percentage >= 60 ? 'text-emerald-400' : 'text-rose-400'}">${r.percentage}%</td>
         </tr>
       `).join('');
     }
 
-    function openStudentPermissionsModal(phone) {
-      const student = appState.users.find(u => u.phone === phone);
-      if (!student) return;
-      if (!student.allowedSubjects) student.allowedSubjects = [];
+    function renderAdminSupportInbox() {}
 
-      let checkboxesHtml = appState.subjects.map(sub => `
-        <label class="flex items-center gap-2.5 p-3 bg-dark-900 border border-slate-800 rounded-2xl cursor-pointer hover:border-cyan-500 transition">
-          <input type="checkbox" value="${sub.id}" ${student.allowedSubjects.includes(sub.id) ? 'checked' : ''} class="student-sub-chk w-4 h-4 text-cyan-600 rounded">
-          <span class="text-white text-xs font-bold">${sub.title}</span>
-        </label>
-      `).join('');
+    // STUDENT DASHBOARD LOGIC
+    function renderStudentDashboard() {
+      const grid = document.getElementById('subjects-cards-grid');
+      if (!grid) return;
 
-      Swal.fire({
-        title: `تفعيل مواد الطالب: ${student.name}`,
-        html: `<div class="space-y-2 text-right max-h-64 overflow-y-auto pr-1">${checkboxesHtml}</div>`,
-        showCancelButton: true, 
-        confirmButtonText: 'حفظ الصلاحيات', 
-        cancelButtonText: 'إلغاء',
-        preConfirm: async () => {
-          // تحديث فوري محلياً (Optimistic Update)
-          const newAllowed = Array.from(document.querySelectorAll('.student-sub-chk:checked')).map(el => el.value);
-          student.allowedSubjects = newAllowed;
-          
-          // تحديث الجدول فوراً لكي لا يشعر الأدمن بأي تأخير
-          renderAdminUsersTable();
+      const myAllowed = currentUser.allowedSubjects || [];
+      const filteredSubjects = appState.subjects.filter(s => myAllowed.includes('*') || myAllowed.includes(s.id));
 
-          // إظهار مؤشر التحميل الصغير أو الحفظ في الخلفية
-          Swal.showLoading();
-          await saveDataToServer();
-          return true;
-        }
-      }).then((result) => {
-        if (result.isConfirmed) {
-          Swal.fire({
-            title: 'تم الحفظ بنجاح',
-            icon: 'success',
-            timer: 1200,
-            showConfirmButton: false
-          });
-        }
-      });
-    }
-
-    // SUPPORT CHAT & NOTIFICATIONS
-    function toggleSupportChatModal() { 
-      const modal = document.getElementById('supportModal');
-      modal.classList.toggle('hidden');
-      if (!modal.classList.contains('hidden')) {
-        markMessagesAsRead();
-      }
-    }
-
-    function checkUnreadNotifications() {
-      if (!currentUser) return;
-      let hasUnread = false;
-
-      if (currentUser.role === 'admin') {
-        hasUnread = appState.supportMessages.some(m => !m.adminRead);
-      } else {
-        hasUnread = appState.supportMessages.some(m => m.senderPhone === currentUser.phone && m.reply && !m.studentRead);
+      if (filteredSubjects.length === 0) {
+        grid.innerHTML = `<div class="col-span-2 text-center p-8 bg-dark-800/50 rounded-2xl border border-slate-800 text-slate-400 text-xs font-bold">لا توجد مواد مفعلة لحسابك حالياً. تواصل مع الدعم الفني لتفعيل المواد.</div>`;
+        return;
       }
 
-      const dot = document.getElementById('support-badge-dot');
-      if (dot) {
-        dot.classList.toggle('hidden', !hasUnread);
-      }
-    }
-
-    function markMessagesAsRead() {
-      if (!currentUser) return;
-      if (currentUser.role === 'admin') {
-        appState.supportMessages.forEach(m => m.adminRead = true);
-      } else {
-        appState.supportMessages.forEach(m => {
-          if (m.senderPhone === currentUser.phone && m.reply) m.studentRead = true;
-        });
-      }
-      saveDataToServer();
-      checkUnreadNotifications();
-    }
-
-    function renderSupportMessages() {
-      const container = document.getElementById('supportMessages');
-      if (!container) return;
-      let messages = currentUser.role === 'admin' ? appState.supportMessages : appState.supportMessages.filter(m => m.senderPhone === currentUser.phone);
-      
-      container.innerHTML = messages.length === 0 ? `<p class="text-center text-slate-500 py-8">لا توجد رسائل دعم فني حالياً.</p>` : messages.map(msg => `
-        <div class="bg-dark-900 p-3.5 rounded-2xl border border-slate-800 space-y-2 shadow-sm">
-          <div class="flex justify-between items-center text-[10px]">
-            <span class="font-bold text-cyan-400">${msg.senderName} (${msg.senderPhone})</span>
+      grid.innerHTML = filteredSubjects.map(sub => {
+        const subQuizzes = appState.quizzes.filter(q => q.subjectId === sub.id);
+        return `
+          <div onclick="openSubjectQuizzes('${sub.id}')" class="bg-dark-800/90 border border-slate-800 hover:border-cyan-500/50 p-5 rounded-2xl cursor-pointer transition duration-300 group shadow-xl">
+            <div class="flex items-center justify-between mb-3">
+              <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-base group-hover:scale-110 transition">
+                <i class="fa-solid fa-book-medical"></i>
+              </div>
+              <span class="text-[11px] bg-dark-900 text-slate-400 px-2.5 py-1 rounded-lg border border-slate-800 font-bold">${subQuizzes.length} كويزات</span>
+            </div>
+            <h4 class="font-bold text-sm text-white group-hover:text-cyan-400 transition mb-1">${sub.title}</h4>
+            <p class="text-[11px] text-slate-400">انقر لاستعراض جميع الاختيارات والتقييمات</p>
           </div>
-          <p class="text-slate-200 text-xs leading-relaxed">${msg.text}</p>
-          ${msg.reply ? `<div class="bg-cyan-950/60 p-2.5 rounded-xl border-r-2 border-cyan-400 text-xs text-cyan-200 mt-1.5"><strong>رد الأدمن:</strong> ${msg.reply}</div>` : ''}
-          ${currentUser.role === 'admin' && !msg.reply ? `<button onclick="replyToSupport('${msg.id}')" class="mt-1 px-3 py-1 bg-cyan-600 text-white rounded-lg text-[10px] font-bold">رد على الطالب</button>` : ''}
+        `;
+      }).join('');
+    }
+
+    function openSubjectQuizzes(subId) {
+      currentSubjectId = subId;
+      const sub = appState.subjects.find(s => s.id === subId);
+      document.getElementById('selected-subject-title').innerText = `كويزات مادة: ${sub ? sub.title : ''}`;
+
+      document.getElementById('subjects-container-view').classList.add('hidden');
+      document.getElementById('quizzes-container-view').classList.remove('hidden');
+
+      const quizzes = appState.quizzes.filter(q => q.subjectId === subId);
+      const grid = document.getElementById('quizzes-list-grid');
+
+      if (quizzes.length === 0) {
+        grid.innerHTML = `<div class="text-center p-8 bg-dark-800/50 rounded-2xl border border-slate-800 text-slate-400 text-xs font-bold">لا توجد كويزات مضافة لهذه المادة بعد.</div>`;
+        return;
+      }
+
+      grid.innerHTML = quizzes.map(q => {
+        const doneRes = appState.results.find(r => r.userPhone === currentUser.phone && r.quizId === q.id);
+        return `
+          <div class="flex items-center justify-between p-4 bg-dark-800/90 border border-slate-800 rounded-2xl shadow-lg">
+            <div>
+              <h4 class="font-bold text-xs text-white mb-1">${q.title}</h4>
+              <span class="text-[11px] text-slate-400 font-medium">عدد الأسئلة: ${q.questions.length}</span>
+            </div>
+            <div>
+              ${doneRes ? `
+                <span class="px-3.5 py-2 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold text-xs rounded-xl inline-block">تم الإنجاز (${doneRes.percentage}%)</span>
+              ` : `
+                <button onclick="startQuiz('${q.id}')" class="px-5 py-2 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-cyan-600/20 transition">بدء الاختبار 🚀</button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function backToSubjectsView() {
+      document.getElementById('quizzes-container-view').classList.add('hidden');
+      document.getElementById('subjects-container-view').classList.remove('hidden');
+    }
+
+    function updateStudentProgress() {
+      if (!currentUser) return;
+      const myAllowed = currentUser.allowedSubjects || [];
+      const totalQuizzes = appState.quizzes.filter(q => myAllowed.includes('*') || myAllowed.includes(q.subjectId));
+      if (totalQuizzes.length === 0) return;
+
+      const finished = totalQuizzes.filter(q => appState.results.some(r => r.userPhone === currentUser.phone && r.quizId === q.id));
+      const pct = Math.round((finished.length / totalQuizzes.length) * 100);
+
+      document.getElementById('progress-text').innerText = pct + '%';
+      document.getElementById('overall-progress-bar').style.width = pct + '%';
+    }
+
+    // QUIZ ENGINE LOGIC
+    function startQuiz(quizId) {
+      const q = appState.quizzes.find(x => x.id === quizId);
+      if (!q) return;
+
+      currentQuiz = q;
+      activeQuestions = q.questions;
+      currentQIdx = 0;
+      currentScore = 0;
+      studentAnswersHistory = [];
+
+      document.getElementById('quiz-header-title').innerText = q.title;
+      document.getElementById('q-total').innerText = activeQuestions.length;
+
+      showScreen('quiz-screen');
+      renderCurrentQuestion();
+    }
+
+    function renderCurrentQuestion() {
+      selectedOptIdx = null;
+      const q = activeQuestions[currentQIdx];
+
+      document.getElementById('q-num').innerText = currentQIdx + 1;
+      document.getElementById('question-text').innerText = q.question;
+
+      const progressPct = ((currentQIdx + 1) / activeQuestions.length) * 100;
+      document.getElementById('progress-bar').style.width = progressPct + '%';
+
+      const container = document.getElementById('options-container');
+      container.innerHTML = q.options.map((opt, idx) => `
+        <div onclick="selectOption(${idx})" id="opt-card-${idx}" class="p-4 bg-dark-900 border border-slate-800 rounded-2xl cursor-pointer hover:border-cyan-500/50 transition flex items-center gap-3 group">
+          <div class="w-7 h-7 rounded-xl bg-dark-800 border border-slate-700 text-slate-400 font-bold text-xs flex items-center justify-center group-hover:border-cyan-500 transition" id="opt-badge-${idx}">
+            ${['A', 'B', 'C', 'D'][idx] || (idx + 1)}
+          </div>
+          <span class="text-xs text-slate-200 font-medium">${opt}</span>
         </div>
       `).join('');
-      checkUnreadNotifications();
     }
 
-    async function handleSendSupportMessage(e) {
-      e.preventDefault();
-      const input = document.getElementById('supportInput');
-      const text = input.value.trim();
-      if (!text || !currentUser) return;
-
-      appState.supportMessages.push({ 
-        id: 'sup_' + Date.now(), 
-        senderPhone: currentUser.phone, 
-        senderName: currentUser.name, 
-        text: text, 
-        reply: "",
-        adminRead: false,
-        studentRead: true
-      });
-
-      await saveDataToServer();
-      input.value = '';
-      renderSupportMessages();
-      Swal.fire('تم الإرسال', 'تم إرسال رسالتك للأدمن بنجاح!', 'success');
-    }
-
-    function replyToSupport(msgId) {
-      Swal.fire({ title: 'الرد على الطالب', input: 'text', showCancelButton: true, confirmButtonText: 'إرسال الرد' }).then(async (result) => {
-        if (result.isConfirmed && result.value.trim()) {
-          const msg = appState.supportMessages.find(m => m.id === msgId);
-          if (msg) { 
-            msg.reply = result.value.trim(); 
-            msg.studentRead = false; 
-            await saveDataToServer(); 
-            renderSupportMessages(); 
-          }
+    function selectOption(idx) {
+      selectedOptIdx = idx;
+      activeQuestions[currentQIdx].options.forEach((_, i) => {
+        const card = document.getElementById(`opt-card-${i}`);
+        const badge = document.getElementById(`opt-badge-${i}`);
+        if (i === idx) {
+          card.className = "p-4 bg-cyan-950/40 border-2 border-cyan-500 rounded-2xl cursor-pointer transition flex items-center gap-3 shadow-lg shadow-cyan-500/10";
+          badge.className = "w-7 h-7 rounded-xl bg-cyan-600 text-white font-bold text-xs flex items-center justify-center";
+        } else {
+          card.className = "p-4 bg-dark-900 border border-slate-800 rounded-2xl cursor-pointer opacity-60 transition flex items-center gap-3";
+          badge.className = "w-7 h-7 rounded-xl bg-dark-800 border border-slate-700 text-slate-400 font-bold text-xs flex items-center justify-center";
         }
       });
     }
 
-    function renderAdminSupportInbox() { renderSupportMessages(); }
+    function nextQuestion() {
+      if (selectedOptIdx === null) {
+        Swal.fire({ icon: 'warning', title: 'تنبيه', text: 'يرجى اختيار إجابة أولاً!' });
+        return;
+      }
 
+      const q = activeQuestions[currentQIdx];
+      const isCorrect = selectedOptIdx === q.answer;
+      if (isCorrect) currentScore++;
+
+      studentAnswersHistory.push({
+        question: q.question,
+        options: q.options,
+        correctIdx: q.answer,
+        userIdx: selectedOptIdx,
+        isCorrect
+      });
+
+      currentQIdx++;
+      if (currentQIdx < activeQuestions.length) {
+        renderCurrentQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      const total = activeQuestions.length;
+      const pct = Math.round((currentScore / total) * 100);
+
+      const resObj = {
+        id: 'res_' + Date.now(),
+        userPhone: currentUser.phone,
+        userName: currentUser.name,
+        quizId: currentQuiz.id,
+        quizTitle: currentQuiz.title,
+        subjectId: currentQuiz.subjectId,
+        score: currentScore,
+        total: total,
+        percentage: pct
+      };
+
+      appState.results.push(resObj);
+      saveDataToServer();
+
+      document.getElementById('final-score').innerText = pct + '%';
+      showScreen('result-screen');
+      renderLeaderboard('quiz');
+    }
+
+    // LEADERBOARD SYSTEM
+    function changeLeaderboardScope(scope) {
+      ['quiz', 'subject', 'global'].forEach(s => {
+        const btn = document.getElementById(`scope-btn-${s}`);
+        btn.className = (s === scope) 
+          ? "px-3 py-1.5 rounded-lg bg-cyan-600 text-white shadow-md transition" 
+          : "px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition";
+      });
+      renderLeaderboard(scope);
+    }
+
+    function renderLeaderboard(scope) {
+      const container = document.getElementById('leaderboard-list-container');
+      if (!container) return;
+
+      let filteredRes = [];
+      if (scope === 'quiz') {
+        filteredRes = appState.results.filter(r => r.quizId === currentQuiz.id);
+      } else if (scope === 'subject') {
+        filteredRes = appState.results.filter(r => r.subjectId === currentQuiz.subjectId);
+      } else {
+        filteredRes = [...appState.results];
+      }
+
+      const userTotals = {};
+      filteredRes.forEach(r => {
+        if (!userTotals[r.userPhone]) {
+          userTotals[r.userPhone] = { name: r.userName, phone: r.userPhone, score: 0, count: 0 };
+        }
+        userTotals[r.userPhone].score += r.percentage;
+        userTotals[r.userPhone].count += 1;
+      });
+
+      const ranked = Object.values(userTotals).map(u => ({
+        name: u.name,
+        phone: u.phone,
+        avg: Math.round(u.score / u.count)
+      })).sort((a, b) => b.avg - a.avg);
+
+      if (ranked.length === 0) {
+        container.innerHTML = `<div class="text-center p-4 text-slate-400">لا توجد نتائج مسجلة لهذا الترتيب بعد</div>`;
+        return;
+      }
+
+      container.innerHTML = ranked.map((item, idx) => {
+        let rankBadge = `<span class="w-6 h-6 rounded-lg bg-dark-900 border border-slate-700 text-slate-400 flex items-center justify-center font-bold">${idx + 1}</span>`;
+        if (idx === 0) rankBadge = `<span class="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center font-bold">🥇</span>`;
+        if (idx === 1) rankBadge = `<span class="w-6 h-6 rounded-lg bg-slate-300/20 text-slate-200 border border-slate-300/40 flex items-center justify-center font-bold">🥈</span>`;
+        if (idx === 2) rankBadge = `<span class="w-6 h-6 rounded-lg bg-amber-700/20 text-amber-600 border border-amber-700/40 flex items-center justify-center font-bold">🥉</span>`;
+
+        const isMe = currentUser && item.phone === currentUser.phone;
+
+        return `
+          <div class="flex items-center justify-between p-3 rounded-xl ${isMe ? 'bg-cyan-950/40 border border-cyan-500/50 shadow-md' : 'bg-dark-900/80 border border-slate-800'}">
+            <div class="flex items-center gap-3">
+              ${rankBadge}
+              <span class="font-bold text-xs ${isMe ? 'text-cyan-400' : 'text-white'}">${item.name} ${isMe ? '(أنت)' : ''}</span>
+            </div>
+            <span class="font-extrabold text-xs ${item.avg >= 80 ? 'text-emerald-400' : 'text-cyan-400'}">${item.avg}%</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // REVIEW MODAL
+    function openReviewModal() {
+      const container = document.getElementById('review-questions-container');
+      container.innerHTML = studentAnswersHistory.map((item, idx) => `
+        <div class="p-4 bg-dark-900 border ${item.isCorrect ? 'border-emerald-500/30' : 'border-rose-500/30'} rounded-2xl space-y-2.5">
+          <div class="flex justify-between items-start gap-2">
+            <span class="font-bold text-white">س${idx + 1}: ${item.question}</span>
+            <span class="px-2.5 py-1 rounded-lg text-[10px] font-bold ${item.isCorrect ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}">
+              ${item.isCorrect ? 'إجابة صحيحة' : 'إجابة خاطئة'}
+            </span>
+          </div>
+          <div class="space-y-1.5 pl-2">
+            ${item.options.map((opt, oIdx) => {
+              let optStyle = "text-slate-400";
+              if (oIdx === item.correctIdx) optStyle = "text-emerald-400 font-bold";
+              else if (oIdx === item.userIdx && !item.isCorrect) optStyle = "text-rose-400 line-through";
+              return `<div class="${optStyle} text-xs flex items-center gap-1.5"><span>•</span> <span>${opt}</span></div>`;
+            }).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('reviewModal').classList.remove('hidden');
+    }
+
+    function closeReviewModal() {
+      document.getElementById('reviewModal').classList.add('hidden');
+    }
+
+    // PROFILE MODAL
     function openProfileModal() {
       if (!currentUser) return;
       document.getElementById('prof-avatar').innerText = currentUser.name.charAt(0);
       document.getElementById('prof-header-name').innerText = currentUser.name;
-      ['name', 'uni', 'college', 'year', 'address'].forEach(f => document.getElementById(`prof-input-${f}`).value = currentUser[f]);
+      document.getElementById('prof-input-name').value = currentUser.name || '';
+      document.getElementById('prof-input-uni').value = currentUser.uni || '';
+      document.getElementById('prof-input-college').value = currentUser.college || '';
+      document.getElementById('prof-input-year').value = currentUser.year || '';
+      document.getElementById('prof-input-address').value = currentUser.address || '';
+
       document.getElementById('profileModal').classList.remove('hidden');
     }
 
-    function closeProfileModal() { document.getElementById('profileModal').classList.add('hidden'); }
+    function closeProfileModal() {
+      document.getElementById('profileModal').classList.add('hidden');
+    }
 
-    async function saveProfileChanges(e) {
+    function saveProfileChanges(e) {
       e.preventDefault();
-      ['name', 'uni', 'college', 'year', 'address'].forEach(f => currentUser[f] = document.getElementById(`prof-input-${f}`).value.trim());
+      currentUser.name = document.getElementById('prof-input-name').value.trim();
+      currentUser.uni = document.getElementById('prof-input-uni').value.trim();
+      currentUser.college = document.getElementById('prof-input-college').value.trim();
+      currentUser.year = document.getElementById('prof-input-year').value.trim();
+      currentUser.address = document.getElementById('prof-input-address').value.trim();
+
       const idx = appState.users.findIndex(u => u.phone === currentUser.phone);
       if (idx !== -1) appState.users[idx] = currentUser;
-      await saveDataToServer();
-      const storageType = localStorage.getItem('dr_smart_current_user') ? localStorage : sessionStorage;
-      storageType.setItem('dr_smart_current_user', JSON.stringify(currentUser));
+
+      saveDataToServer();
       document.getElementById('badge-name').innerText = currentUser.name;
       closeProfileModal();
-      Swal.fire('تم الحفظ', 'تم تحديث بياناتك بنجاح!', 'success');
+      Swal.fire({ icon: 'success', title: 'تم حفظ البيانات بنجاح', timer: 1200, showConfirmButton: false });
     }
 
-    function showScreen(screenId) {
-      ['auth-screen', 'admin-screen', 'dashboard-screen', 'quiz-screen', 'result-screen'].forEach(id => {
-        document.getElementById(id).classList.toggle('hidden', id !== screenId);
-      });
+    // SUPPORT CHAT SYSTEM
+    function toggleSupportChatModal() {
+      const modal = document.getElementById('supportModal');
+      modal.classList.toggle('hidden');
+      if (!modal.classList.contains('hidden')) {
+        renderSupportMessages();
+      }
     }
+
+    function handleSendSupportMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('supportInput');
+      const txt = input.value.trim();
+      if (!txt || !currentUser) return;
+
+      const msg = {
+        id: 'msg_' + Date.now(),
+        senderPhone: currentUser.phone,
+        senderName: currentUser.name,
+        role: currentUser.role,
+        text: txt,
+        time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+      };
+
+      appState.supportMessages.push(msg);
+      saveDataToServer();
+      input.value = '';
+      renderSupportMessages();
+    }
+
+    function renderSupportMessages() {
+      const box = document.getElementById('supportMessages');
+      if (!box || !currentUser) return;
+
+      const myMsgs = appState.supportMessages.filter(m => m.senderPhone === currentUser.phone || currentUser.role === 'admin');
+
+      box.innerHTML = myMsgs.map(m => {
+        const isMe = m.senderPhone === currentUser.phone;
+        return `
+          <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} space-y-1">
+            <span class="text-[10px] text-slate-400 font-bold">${m.senderName}</span>
+            <div class="p-3 rounded-2xl max-w-[80%] text-xs ${isMe ? 'bg-cyan-600 text-white rounded-br-none' : 'bg-dark-800 text-slate-200 border border-slate-700 rounded-bl-none'}">
+              ${m.text}
+            </div>
+            <span class="text-[9px] text-slate-500">${m.time}</span>
+          </div>
+        `;
+      }).join('');
+
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function checkUnreadNotifications() {}
   </script>
 </body>
 </html>
