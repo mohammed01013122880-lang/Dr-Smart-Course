@@ -46,7 +46,6 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-20 items-center py-3">
         
-        <!-- Logo & Brand -->
         <div class="flex items-center gap-3.5 cursor-pointer group" onclick="navigateHome()">
           <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-600 via-teal-500 to-emerald-400 text-white flex items-center justify-center shadow-lg shadow-cyan-500/30 group-hover:scale-105 transition duration-300 border border-cyan-400/30">
             <i class="fa-solid fa-stethoscope text-2xl"></i>
@@ -59,13 +58,17 @@
           </div>
         </div>
 
-        <!-- User Controls -->
         <div class="flex items-center gap-3">
           <button onclick="toggleSupportChatModal()" class="relative flex items-center gap-2 bg-dark-700/80 hover:bg-dark-600 text-slate-200 font-bold px-3.5 py-2.5 rounded-xl text-xs transition border border-slate-700/60 shadow-md">
             <i class="fa-solid fa-headset text-cyan-400 text-sm"></i>
             <span class="hidden sm:inline">الدعم الفني</span>
             <span id="support-badge-dot" class="hidden absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-500 rounded-full border-2 border-dark-800 animate-pulse"></span>
           </button>
+
+          <div id="connection-status" class="hidden items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2.5 py-1.5 rounded-xl text-[10px] font-bold">
+            <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+            <span id="connection-text">متصل</span>
+          </div>
 
           <div id="user-badge" class="hidden flex items-center gap-2">
             <button onclick="openProfileModal()" class="bg-dark-700/80 hover:bg-dark-600 text-cyan-300 text-xs px-3.5 py-2.5 rounded-xl font-bold border border-slate-700/60 flex items-center gap-2 transition shadow-md">
@@ -98,7 +101,6 @@
         <button id="tab-signup-btn" onclick="switchTab('signup')" class="flex-1 py-2.5 text-xs font-bold rounded-xl text-slate-400 hover:text-white transition">حساب جديد</button>
       </div>
 
-      <!-- Login Form -->
       <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-slate-300 mb-1.5">رقم الموبايل</label>
@@ -117,7 +119,6 @@
         </button>
       </form>
 
-      <!-- Sign Up Form -->
       <form id="signup-form" onsubmit="handleSignup(event)" class="space-y-3.5 hidden">
         <div>
           <label class="block text-xs font-bold text-slate-300 mb-1">الاسم بالكامل</label>
@@ -161,12 +162,19 @@
     <div id="admin-screen" class="space-y-6 hidden">
       <div class="flex items-center justify-between border-b border-slate-800 pb-4">
         <h2 class="text-base font-black text-white flex items-center gap-2.5">
-          <i class="fa-solid fa-sliders text-cyan-400"></i> لوحة الإدارة العامة (متصل بالسيرفر المباشر)
+          <i class="fa-solid fa-sliders text-cyan-400"></i> لوحة الإدارة العامة
         </h2>
-        <span class="bg-cyan-500/10 text-cyan-400 text-xs font-bold px-3.5 py-1.5 rounded-full border border-cyan-500/20 shadow-sm">Master Admin</span>
+        <div class="flex items-center gap-2">
+          <button onclick="manualBackup()" class="bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white text-xs font-bold px-3.5 py-2 rounded-xl border border-emerald-500/30 transition">
+            <i class="fa-solid fa-cloud-arrow-up"></i> نسخة احتياطية
+          </button>
+          <button onclick="openRestoreModal()" class="bg-amber-600/20 hover:bg-amber-600 text-amber-400 hover:text-white text-xs font-bold px-3.5 py-2 rounded-xl border border-amber-500/30 transition">
+            <i class="fa-solid fa-clock-rotate-left"></i> استعادة
+          </button>
+          <span class="bg-cyan-500/10 text-cyan-400 text-xs font-bold px-3.5 py-1.5 rounded-full border border-cyan-500/20 shadow-sm">Master Admin</span>
+        </div>
       </div>
 
-      <!-- Admin Navigation Tabs -->
       <div class="flex bg-dark-800 p-1.5 rounded-2xl text-xs border border-slate-800 gap-1 overflow-x-auto shadow-inner">
         <button id="adm-tab-subjects" onclick="switchAdminSubTab('subjects')" class="flex-1 py-2.5 px-3 font-bold rounded-xl bg-cyan-600 text-white shadow-md">إدارة المواد</button>
         <button id="adm-tab-upload" onclick="switchAdminSubTab('upload')" class="flex-1 py-2.5 px-3 font-bold rounded-xl text-slate-400 hover:text-white transition">إضافة كويز (PDF/نص)</button>
@@ -174,7 +182,6 @@
         <button id="adm-tab-users" onclick="switchAdminSubTab('users')" class="flex-1 py-2.5 px-3 font-bold rounded-xl text-slate-400 hover:text-white transition">إدارة الطلاب</button>
       </div>
 
-      <!-- SubTab 1: Subject Management -->
       <div id="adm-sec-subjects" class="space-y-4">
         <div class="bg-dark-800/80 p-5 rounded-2xl border border-slate-800 space-y-3.5 shadow-xl">
           <h3 class="text-xs font-bold text-cyan-400">إضافة مادة جديدة للمنصة</h3>
@@ -189,7 +196,6 @@
         </div>
       </div>
 
-      <!-- SubTab 2: Smart Quiz Import -->
       <div id="adm-sec-upload" class="hidden space-y-4">
         <div class="bg-dark-800/80 p-5 rounded-2xl border border-slate-800 space-y-4 text-xs shadow-xl">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -218,7 +224,6 @@
         </div>
       </div>
 
-      <!-- SubTab 3: Quiz Analytics -->
       <div id="adm-sec-stats" class="hidden space-y-4">
         <div class="bg-dark-800/80 p-5 rounded-2xl border border-slate-800 space-y-3.5 shadow-xl">
           <h3 class="text-xs font-bold text-cyan-400">سجل نتائج وحضور الطلاب</h3>
@@ -239,7 +244,6 @@
         </div>
       </div>
 
-      <!-- SubTab 4: Users Management -->
       <div id="adm-sec-users" class="hidden space-y-4">
         <div class="overflow-x-auto border border-slate-800 rounded-2xl bg-dark-800/50 shadow-xl">
           <div class="p-3.5 bg-dark-900 border-b border-slate-800 text-xs font-bold text-white">قائمة الطلاب المسجلين</div>
@@ -309,7 +313,7 @@
       </div>
     </div>
 
-    <!-- 5. RESULT SCREEN WITH PROFESSIONAL LEADERBOARD -->
+    <!-- 5. RESULT SCREEN -->
     <div id="result-screen" class="space-y-6 text-center hidden">
       <div class="p-6 bg-dark-800/90 border border-slate-800 rounded-3xl space-y-4 shadow-2xl backdrop-blur-xl">
         <div class="w-20 h-20 bg-gradient-to-tr from-cyan-500/20 to-teal-500/20 text-cyan-400 rounded-3xl flex items-center justify-center mx-auto border-2 border-cyan-500/50 font-black text-2xl shadow-xl shadow-cyan-500/10" id="final-score">0%</div>
@@ -322,7 +326,6 @@
         </button>
       </div>
 
-      <!-- Professional Leaderboard Card -->
       <div class="bg-dark-800/90 border border-slate-800 rounded-3xl p-6 text-right space-y-4 shadow-2xl backdrop-blur-xl">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800/80 pb-3.5">
           <h4 class="text-xs font-black text-white flex items-center gap-2">
@@ -401,16 +404,12 @@
 
   <!-- SCRIPT ENGINE -->
   <script>
+    /* ==================== CONFIG ==================== */
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynzdn6nviJY3QUASNECipUu-LXWw2uDr0z9YSrVCXIaCB_-VF-FHFsSX4qjNjpPBdZwg/exec";
 
+    /* ==================== STATE ==================== */
     let appState = {
-      subjects: [
-        { id: "sub_1", title: "Anatomy" },
-        { id: "sub_2", title: "Physiology" },
-        { id: "sub_3", title: "Biochemistry" },
-        { id: "sub_4", title: "Histology" },
-        { id: "sub_5", title: "Forensic Medicine & Toxicology" }
-      ],
+      subjects: [],
       quizzes: [],
       users: [],
       supportMessages: [],
@@ -425,8 +424,18 @@
     let currentScore = 0;
     let selectedOptIdx = null;
     let studentAnswersHistory = [];
+    let isOnline = true;
+    let syncInterval = null;
+    let offlineQueue = [];
 
+    /* ==================== INIT ==================== */
     window.onload = async function() {
+      // استعادة Queue العمليات الفاشلة
+      const savedQueue = localStorage.getItem('dr_smart_offline_queue');
+      if (savedQueue) {
+        try { offlineQueue = JSON.parse(savedQueue); } catch(e) { offlineQueue = []; }
+      }
+
       const savedUser = localStorage.getItem('dr_smart_current_user') || sessionStorage.getItem('dr_smart_current_user');
       if (savedUser) {
         currentUser = JSON.parse(savedUser);
@@ -440,7 +449,9 @@
 
       await loadDataFromServer();
       if (currentUser) checkAuthSession();
-      setInterval(syncDataBackground, 4000);
+      
+      updateConnectionStatus(true);
+      syncInterval = setInterval(syncDataBackground, 8000);
 
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' && !document.getElementById('quiz-screen').classList.contains('hidden')) {
@@ -448,62 +459,209 @@
           nextQuestion();
         }
       });
+
+      // محاولة إرسال أي عمليات معلقة كل 15 ثانية
+      setInterval(flushOfflineQueue, 15000);
     };
 
+    /* ==================== SERVER COMMUNICATION ==================== */
     async function loadDataFromServer() {
       try {
         const res = await fetch(GOOGLE_SCRIPT_URL);
         const data = await res.json();
-        if (data && data.subjects) {
-          appState = data;
+
+        // ✅ تحقق صارم من صحة البيانات
+        if (!data || typeof data !== 'object' || data.error) {
+          console.warn('⚠️ بيانات غير صالحة من السيرفر');
+          return false;
+        }
+        if (!Array.isArray(data.subjects) || !Array.isArray(data.users)) {
+          console.warn('⚠️ بنية بيانات غير صحيحة');
+          return false;
+        }
+
+        // ✅ حماية: لو السيرفر رجّع بيانات فارغة والحالة المحلية فيها بيانات → تجاهل
+        if (data.users.length === 0 && appState.users.length > 0) {
+          console.warn('⚠️ السيرفر رجّع 0 مستخدمين، تجاهلنا التحديث لحماية البيانات');
+          return false;
+        }
+
+        appState = {
+          subjects: data.subjects || [],
+          quizzes: data.quizzes || [],
+          users: data.users || [],
+          results: data.results || [],
+          supportMessages: data.supportMessages || []
+        };
+        updateConnectionStatus(true);
+        return true;
+      } catch(e) {
+        console.error('❌ فشل تحميل البيانات:', e);
+        updateConnectionStatus(false);
+        return false;
+      }
+    }
+
+    async function sendAction(action, payload, showError = true) {
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ action, payload }),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        });
+        const data = await res.json();
+        if (data && data.success) {
+          updateConnectionStatus(true);
+          return data.data;
+        } else {
+          console.error('Server error:', data);
+          if (showError) Swal.fire({ icon: 'error', title: 'خطأ في الحفظ', text: data?.error || 'حدث خطأ غير متوقع' });
+          return null;
         }
       } catch(e) {
-        console.log("Offline mode active");
+        console.error('❌ فشل الاتصال:', e);
+        updateConnectionStatus(false);
+        // ✅ أضف للـ Queue
+        offlineQueue.push({ action, payload, time: Date.now() });
+        localStorage.setItem('dr_smart_offline_queue', JSON.stringify(offlineQueue));
+        if (showError) {
+          Swal.fire({ 
+            icon: 'warning', 
+            title: 'انقطع الاتصال', 
+            text: 'تم حفظ العملية محليًا وسيتم إرسالها تلقائيًا عند عودة الاتصال' 
+          });
+        }
+        return null;
       }
     }
 
-    async function saveDataToServer() {
-      try {
-        await fetch(GOOGLE_SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "saveAll", payload: appState })
-        });
-      } catch(e) {
-        console.log("Error saving to server");
+    async function flushOfflineQueue() {
+      if (offlineQueue.length === 0) return;
+      console.log(`🔄 محاولة إرسال ${offlineQueue.length} عملية معلقة...`);
+      
+      const remaining = [];
+      for (const op of offlineQueue) {
+        try {
+          const res = await fetch(GOOGLE_SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: op.action, payload: op.payload }),
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+          });
+          const data = await res.json();
+          if (!data || !data.success) remaining.push(op);
+        } catch(e) {
+          remaining.push(op);
+        }
+      }
+      offlineQueue = remaining;
+      localStorage.setItem('dr_smart_offline_queue', JSON.stringify(offlineQueue));
+      
+      if (offlineQueue.length === 0 && !isOnline) {
+        updateConnectionStatus(true);
+        await loadDataFromServer();
+        if (currentUser) checkAuthSession();
       }
     }
 
+    function updateConnectionStatus(online) {
+      isOnline = online;
+      const badge = document.getElementById('connection-status');
+      const text = document.getElementById('connection-text');
+      if (!badge || !text) return;
+
+      badge.classList.remove('hidden');
+      badge.classList.add('flex');
+
+      if (online) {
+        badge.className = "flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2.5 py-1.5 rounded-xl text-[10px] font-bold";
+        text.innerText = "متصل";
+      } else {
+        badge.className = "flex items-center gap-1.5 bg-rose-500/10 border border-rose-500/30 text-rose-400 px-2.5 py-1.5 rounded-xl text-[10px] font-bold";
+        text.innerText = "غير متصل";
+      }
+    }
+
+    /* ==================== BACKGROUND SYNC ==================== */
     async function syncDataBackground() {
+      // ✅ لا تزامن لو فيه عمليات معلقة
+      if (offlineQueue.length > 0) {
+        flushOfflineQueue();
+        return;
+      }
+
       try {
         const res = await fetch(GOOGLE_SCRIPT_URL);
         const data = await res.json();
-        if (data && data.subjects) {
-          appState = data;
-          if (currentUser) {
-            const freshMe = appState.users.find(u => u.phone === currentUser.phone);
-            if (freshMe) { 
-              currentUser = freshMe; 
-              const storageType = localStorage.getItem('dr_smart_current_user') ? localStorage : sessionStorage;
-              storageType.setItem('dr_smart_current_user', JSON.stringify(currentUser)); 
-            }
+
+        // ✅ تحقق صارم جدًا
+        if (!data || data.error) return;
+        if (!Array.isArray(data.subjects) || !Array.isArray(data.users)) return;
+
+        // ✅ حماية ضد الكتابة الفوقية الفارغة
+        if (data.users.length === 0 && appState.users.length > 0) return;
+        if (data.subjects.length === 0 && appState.subjects.length > 0) return;
+
+        // ✅ دمج ذكي (بدل استبدال كامل)
+        mergeRemoteData(data);
+
+        // تحديث واجهة المستخدم الحالية
+        if (currentUser) {
+          const freshMe = appState.users.find(u => u.phone === currentUser.phone);
+          if (freshMe) {
+            currentUser = freshMe;
+            const storageType = localStorage.getItem('dr_smart_current_user') ? localStorage : sessionStorage;
+            storageType.setItem('dr_smart_current_user', JSON.stringify(currentUser));
           }
-          if (currentUser && currentUser.role === 'admin') {
+
+          if (currentUser.role === 'admin') {
             renderAdminUsersTable();
-            renderAdminSupportInbox();
-          } else if (currentUser) {
+            renderAdminSubjectsList();
+            renderQuizStatsTable();
+          } else {
             renderStudentDashboard();
             updateStudentProgress();
           }
-          renderSupportMessages();
-          checkUnreadNotifications();
         }
-      } catch(e) {}
+        renderSupportMessages();
+        updateConnectionStatus(true);
+
+      } catch(e) {
+        // تجاهل أخطاء المزامنة الصامتة
+      }
     }
 
+    function mergeRemoteData(remote) {
+      // دمج Subjects
+      const subMap = new Map(appState.subjects.map(s => [s.id, s]));
+      (remote.subjects || []).forEach(s => subMap.set(s.id, s));
+      appState.subjects = Array.from(subMap.values());
+
+      // دمج Quizzes
+      const quizMap = new Map(appState.quizzes.map(q => [q.id, q]));
+      (remote.quizzes || []).forEach(q => quizMap.set(q.id, q));
+      appState.quizzes = Array.from(quizMap.values());
+
+      // دمج Users
+      const userMap = new Map(appState.users.map(u => [u.phone, u]));
+      (remote.users || []).forEach(u => userMap.set(u.phone, u));
+      appState.users = Array.from(userMap.values());
+
+      // دمج Results (بالـ id)
+      const resMap = new Map(appState.results.map(r => [r.id, r]));
+      (remote.results || []).forEach(r => resMap.set(r.id, r));
+      appState.results = Array.from(resMap.values());
+
+      // دمج Messages
+      const msgMap = new Map(appState.supportMessages.map(m => [m.id, m]));
+      (remote.supportMessages || []).forEach(m => msgMap.set(m.id, m));
+      appState.supportMessages = Array.from(msgMap.values());
+    }
+
+    /* ==================== AUTH SESSION ==================== */
     function checkAuthSession() {
       const uIdx = appState.users.findIndex(u => u.phone === currentUser.phone);
-      if (uIdx !== -1) { currentUser = appState.users[uIdx]; }
-      
+      if (uIdx !== -1) currentUser = appState.users[uIdx];
+
       document.getElementById('user-badge').classList.remove('hidden');
       document.getElementById('badge-name').innerText = currentUser.name;
 
@@ -512,7 +670,7 @@
         renderAdminSubjectsList();
         renderAdminUsersTable();
         renderQuizStatsTable();
-        renderAdminSupportInbox();
+        updateSubjectDropdown();
       } else {
         showScreen('dashboard-screen');
         document.getElementById('student-welcome-name').innerText = currentUser.name;
@@ -520,7 +678,6 @@
         updateStudentProgress();
       }
       renderSupportMessages();
-      checkUnreadNotifications();
     }
 
     function confirmLogout() {
@@ -533,9 +690,7 @@
         cancelButtonText: 'إلغاء',
         confirmButtonColor: '#e11d48'
       }).then((result) => {
-        if (result.isConfirmed) {
-          logout();
-        }
+        if (result.isConfirmed) logout();
       });
     }
 
@@ -581,14 +736,14 @@
       document.getElementById(screenId).classList.remove('hidden');
     }
 
-    // AUTHENTICATION LOGIC
-    function handleLogin(e) {
+    /* ==================== LOGIN / SIGNUP ==================== */
+    async function handleLogin(e) {
       e.preventDefault();
       const phone = document.getElementById('login-phone').value.trim();
       const password = document.getElementById('login-password').value.trim();
       const remember = document.getElementById('remember-me').checked;
 
-      // Admin Account
+      // Admin
       if (phone === '01000000000' && password === 'admin') {
         currentUser = { name: "المدير العام", phone, role: "admin", allowedSubjects: ["*"] };
         const storage = remember ? localStorage : sessionStorage;
@@ -603,13 +758,13 @@
         const storage = remember ? localStorage : sessionStorage;
         storage.setItem('dr_smart_current_user', JSON.stringify(currentUser));
         checkAuthSession();
-        Swal.fire({ icon: 'success', title: 'أهلاً بك بك دكتور!', timer: 1500, showConfirmButton: false });
+        Swal.fire({ icon: 'success', title: 'أهلاً بك يا دكتور!', timer: 1500, showConfirmButton: false });
       } else {
         Swal.fire({ icon: 'error', title: 'خطأ', text: 'رقم الموبايل أو كلمة المرور غير صحيحة' });
       }
     }
 
-    function handleSignup(e) {
+    async function handleSignup(e) {
       e.preventDefault();
       const name = document.getElementById('signup-name').value.trim();
       const phone = document.getElementById('signup-phone').value.trim();
@@ -630,8 +785,17 @@
         allowedSubjects: []
       };
 
+      // ✅ احفظ محليًا فورًا
       appState.users.push(newUser);
-      saveDataToServer();
+      
+      // ✅ أرسل للسيرفر
+      const result = await sendAction('addUser', newUser, false);
+      if (result && result.error) {
+        // فشل - ارجع الحالة
+        appState.users = appState.users.filter(u => u.phone !== phone);
+        Swal.fire({ icon: 'error', title: 'خطأ', text: result.error });
+        return;
+      }
 
       currentUser = newUser;
       localStorage.setItem('dr_smart_current_user', JSON.stringify(currentUser));
@@ -639,7 +803,7 @@
       Swal.fire({ icon: 'success', title: 'تم إنشاء الحساب بنجاح!', timer: 1800, showConfirmButton: false });
     }
 
-    // ADMIN CONTROL PANEL LOGIC
+    /* ==================== ADMIN PANEL ==================== */
     function switchAdminSubTab(tab) {
       ['subjects', 'upload', 'stats', 'users'].forEach(t => {
         document.getElementById(`adm-sec-${t}`).classList.add('hidden');
@@ -651,14 +815,20 @@
       if (tab === 'upload') updateSubjectDropdown();
     }
 
-    function addSubjectByAdmin() {
+    async function addSubjectByAdmin() {
       const nameInput = document.getElementById('new-subject-name');
       const title = nameInput.value.trim();
       if (!title) return;
 
       const newSub = { id: 'sub_' + Date.now(), title };
+      
+      const result = await sendAction('addSubject', newSub, false);
+      if (result && result.error) {
+        Swal.fire({ icon: 'error', title: 'خطأ', text: result.error });
+        return;
+      }
+
       appState.subjects.push(newSub);
-      saveDataToServer();
       nameInput.value = '';
       renderAdminSubjectsList();
       Swal.fire({ icon: 'success', title: 'تم إضافة المادة بنجاح', timer: 1200, showConfirmButton: false });
@@ -683,11 +853,15 @@
         showCancelButton: true,
         confirmButtonText: 'نعم، احذف',
         cancelButtonText: 'إلغاء'
-      }).then(r => {
+      }).then(async r => {
         if (r.isConfirmed) {
+          const result = await sendAction('deleteSubject', { id: subId }, false);
+          if (result && result.error) {
+            Swal.fire({ icon: 'error', title: 'خطأ', text: result.error });
+            return;
+          }
           appState.subjects = appState.subjects.filter(s => s.id !== subId);
           appState.quizzes = appState.quizzes.filter(q => q.subjectId !== subId);
-          saveDataToServer();
           renderAdminSubjectsList();
         }
       });
@@ -724,7 +898,7 @@
       }
     }
 
-    function processAndSaveQuiz() {
+    async function processAndSaveQuiz() {
       const subjectId = document.getElementById('upload-subject-select').value;
       const title = document.getElementById('upload-quiz-title').value.trim();
       const bulkText = document.getElementById('bulk-text-input').value.trim();
@@ -747,9 +921,13 @@
         questions
       };
 
-      appState.quizzes.push(newQuiz);
-      saveDataToServer();
+      const result = await sendAction('addQuiz', newQuiz, false);
+      if (result && result.error) {
+        Swal.fire({ icon: 'error', title: 'خطأ', text: result.error });
+        return;
+      }
 
+      appState.quizzes.push(newQuiz);
       document.getElementById('upload-quiz-title').value = '';
       document.getElementById('bulk-text-input').value = '';
       Swal.fire({ icon: 'success', title: `تم نشر الكويز بـ (${questions.length}) سؤال بنجاح!` });
@@ -832,11 +1010,16 @@
         showCancelButton: true,
         confirmButtonText: 'حفظ التفعيل',
         cancelButtonText: 'إلغاء'
-      }).then(res => {
+      }).then(async res => {
         if (res.isConfirmed) {
           const checked = Array.from(document.querySelectorAll('.user-sub-chk:checked')).map(c => c.value);
           user.allowedSubjects = checked;
-          saveDataToServer();
+          
+          const result = await sendAction('updateUser', user, false);
+          if (result && result.error) {
+            Swal.fire({ icon: 'error', title: 'خطأ', text: result.error });
+            return;
+          }
           renderAdminUsersTable();
           Swal.fire({ icon: 'success', title: 'تم تحديث صلاحيات الطالب بنجاح', timer: 1200, showConfirmButton: false });
         }
@@ -858,9 +1041,59 @@
       `).join('');
     }
 
-    function renderAdminSupportInbox() {}
+    /* ==================== BACKUP / RESTORE ==================== */
+    async function manualBackup() {
+      Swal.fire({ title: 'جاري إنشاء النسخة الاحتياطية...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      const result = await sendAction('backup', {}, false);
+      if (result && result.backupKey) {
+        Swal.fire({ icon: 'success', title: 'تم إنشاء نسخة احتياطية', text: result.backupKey, timer: 2500 });
+      } else {
+        Swal.fire({ icon: 'error', title: 'فشل إنشاء النسخة' });
+      }
+    }
 
-    // STUDENT DASHBOARD LOGIC
+    async function openRestoreModal() {
+      const result = await sendAction('restore', {}, false);
+      if (!result || !result.backups) {
+        Swal.fire({ icon: 'info', title: 'لا توجد نسخ احتياطية' });
+        return;
+      }
+
+      const optionsHtml = result.backups.map(b => 
+        `<option value="${b}">${b.replace('backup_', '').replace(/-/g, ' ')}</option>`
+      ).join('');
+
+      Swal.fire({
+        title: 'استعادة نسخة احتياطية',
+        html: `
+          <div class="text-right space-y-3">
+            <p class="text-xs text-slate-400">اختر النسخة الاحتياطية لاستعادتها. سيتم استبدال البيانات الحالية بالكامل.</p>
+            <select id="backup-select" class="w-full p-3 bg-dark-900 border border-slate-800 rounded-xl text-white text-xs">
+              ${optionsHtml}
+            </select>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'استعادة',
+        cancelButtonText: 'إلغاء',
+        confirmButtonColor: '#f59e0b'
+      }).then(async res => {
+        if (res.isConfirmed) {
+          const key = document.getElementById('backup-select').value;
+          Swal.fire({ title: 'جاري الاستعادة...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+          const restoreRes = await sendAction('restore', { backupKey: key }, false);
+          if (restoreRes && restoreRes.restored) {
+            await loadDataFromServer();
+            if (currentUser) checkAuthSession();
+            Swal.fire({ icon: 'success', title: 'تمت الاستعادة بنجاح!' });
+          } else {
+            Swal.fire({ icon: 'error', title: 'فشل الاستعادة' });
+          }
+        }
+      });
+    }
+
+    /* ==================== STUDENT DASHBOARD ==================== */
     function renderStudentDashboard() {
       const grid = document.getElementById('subjects-cards-grid');
       if (!grid) return;
@@ -944,7 +1177,7 @@
       document.getElementById('overall-progress-bar').style.width = pct + '%';
     }
 
-    // QUIZ ENGINE LOGIC
+    /* ==================== QUIZ ENGINE ==================== */
     function startQuiz(quizId) {
       const q = appState.quizzes.find(x => x.id === quizId);
       if (!q) return;
@@ -1024,7 +1257,7 @@
       }
     }
 
-    function finishQuiz() {
+    async function finishQuiz() {
       const total = activeQuestions.length;
       const pct = Math.round((currentScore / total) * 100);
 
@@ -1041,14 +1274,14 @@
       };
 
       appState.results.push(resObj);
-      saveDataToServer();
+      await sendAction('addResult', resObj, false);
 
       document.getElementById('final-score').innerText = pct + '%';
       showScreen('result-screen');
       renderLeaderboard('quiz');
     }
 
-    // LEADERBOARD SYSTEM
+    /* ==================== LEADERBOARD ==================== */
     function changeLeaderboardScope(scope) {
       ['quiz', 'subject', 'global'].forEach(s => {
         const btn = document.getElementById(`scope-btn-${s}`);
@@ -1112,7 +1345,7 @@
       }).join('');
     }
 
-    // REVIEW MODAL
+    /* ==================== REVIEW MODAL ==================== */
     function openReviewModal() {
       const container = document.getElementById('review-questions-container');
       container.innerHTML = studentAnswersHistory.map((item, idx) => `
@@ -1141,7 +1374,7 @@
       document.getElementById('reviewModal').classList.add('hidden');
     }
 
-    // PROFILE MODAL
+    /* ==================== PROFILE MODAL ==================== */
     function openProfileModal() {
       if (!currentUser) return;
       document.getElementById('prof-avatar').innerText = currentUser.name.charAt(0);
@@ -1159,7 +1392,7 @@
       document.getElementById('profileModal').classList.add('hidden');
     }
 
-    function saveProfileChanges(e) {
+    async function saveProfileChanges(e) {
       e.preventDefault();
       currentUser.name = document.getElementById('prof-input-name').value.trim();
       currentUser.uni = document.getElementById('prof-input-uni').value.trim();
@@ -1170,22 +1403,20 @@
       const idx = appState.users.findIndex(u => u.phone === currentUser.phone);
       if (idx !== -1) appState.users[idx] = currentUser;
 
-      saveDataToServer();
+      await sendAction('updateUser', currentUser, false);
       document.getElementById('badge-name').innerText = currentUser.name;
       closeProfileModal();
       Swal.fire({ icon: 'success', title: 'تم حفظ البيانات بنجاح', timer: 1200, showConfirmButton: false });
     }
 
-    // SUPPORT CHAT SYSTEM
+    /* ==================== SUPPORT CHAT ==================== */
     function toggleSupportChatModal() {
       const modal = document.getElementById('supportModal');
       modal.classList.toggle('hidden');
-      if (!modal.classList.contains('hidden')) {
-        renderSupportMessages();
-      }
+      if (!modal.classList.contains('hidden')) renderSupportMessages();
     }
 
-    function handleSendSupportMessage(e) {
+    async function handleSendSupportMessage(e) {
       e.preventDefault();
       const input = document.getElementById('supportInput');
       const txt = input.value.trim();
@@ -1201,7 +1432,7 @@
       };
 
       appState.supportMessages.push(msg);
-      saveDataToServer();
+      await sendAction('addMessage', msg, false);
       input.value = '';
       renderSupportMessages();
     }
@@ -1227,8 +1458,6 @@
 
       box.scrollTop = box.scrollHeight;
     }
-
-    function checkUnreadNotifications() {}
   </script>
 </body>
 </html>
